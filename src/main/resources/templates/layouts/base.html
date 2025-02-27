@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+  <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">FTMS</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.css}">
+
+  <!-- jQuery from WebJars -->
+  <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+
+  <!-- Bootstrap JS from WebJars -->
+  <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" th:href="@{/css/custom.css}">
+  <link rel="stylesheet" th:href="@{/css/base.css}">
+</head>
+
+<body>
+  <!-- Page Content -->
+  <section layout:fragment="content">
+    <!-- Child pages will inject content here -->
+  </section>
+
+</body>
+
+</html>

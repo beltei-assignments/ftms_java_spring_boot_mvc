@@ -1,0 +1,18 @@
+{
+  "name": "ftms-java-spring-boot",
+  "version": "1.0.0",
+  "description": "Financial Tracking Management System",
+  "scripts": {
+    "sass:watch": "sass src/main/resources/static/sass/custom.scss src/main/resources/static/css/custom.css --watch",
+    "sass:build": "sass src/main/resources/static/sass/custom.scss src/main/resources/static/css/custom.css --style=compressed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "sass": "^1.85.1"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.2"
+  }
+}
