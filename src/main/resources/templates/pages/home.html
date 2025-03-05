@@ -3,21 +3,165 @@
   layout:decorate="~{layouts/default}">
 
 <head>
-  <style>
-    /* TODO */
-  </style>
   <script>
     // TODO
   </script>
+  <style>
+    .card-balance {
+      background-color: var(--bs-primary-border-subtle);
+    }
+
+    .card-expense {
+      background-color: var(--bs-danger-border-subtle);
+    }
+
+    .card-portfolio {
+      background-color: var(--bs-success-border-subtle);
+    }
+
+    .card-income {
+      background-color: var(--bs-info-border-subtle);
+    }
+
+    .title-transaction {
+      background-color: var(--bs-warning-border-subtle);
+      color: var(--bs-warning-text-emphasis);
+      border: none;
+    }
+
+    .trasaction-rows {
+      background-color: var(--bs-gray-200);
+    }
+
+    .title-spend {
+      background-color: var(--bs-danger-border-subtle);
+      color: var(--bs-danger-text-emphasis);
+      border: none;
+    }
+
+    .title-income {
+      background-color: var(--bs-info-border-subtle);
+      color: var(--bs-info-text-emphasis);
+      border: none;
+    }
+  </style>
 </head>
 
 <body>
   <section layout:fragment="page">
-    <!-- TODO -->
-    <div class="alert alert-warning d-flex align-items-center" role="alert">
-      <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
-      <div>
-        This page is under contruction, we are working on it.
+    <p class="fs-3 m-0">Welcome back</p>
+    <p>Welcome to Financial Tracking Management System</p>
+
+    <!-- Section 1 -->
+    <div class="row g-3">
+      <div class="col-lg-6 col-md-12">
+        <div class="row row-cols-2 g-2">
+          <div class="col">
+            <div class="card border-0 card-balance">
+              <div class="card-body">
+                <h5 class="card-title">Balance</h5>
+                <h5 class="card-title">$ 99,600</h5>
+                <p class="card-text">74% then last month</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card border-0 card-expense">
+              <div class="card-body">
+                <h5 class="card-title">Expense</h5>
+                <h5 class="card-title">$ 99,600</h5>
+                <p class="card-text">74% then last month</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card border-0 card-portfolio">
+              <div class="card-body">
+                <h5 class="card-title">Portfolio</h5>
+                <h5 class="card-title">$ 99,600</h5>
+                <p class="card-text">74% then last month</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card border-0 card-income">
+              <div class="card-body">
+                <h5 class="card-title">Income</h5>
+                <h5 class="card-title">$ 99,600</h5>
+                <p class="card-text">74% then last month</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-12">
+        <div class="card border-0 bg-primary h-100 text-white">
+          <div class="card-body">
+            Spending
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="row mt-0 g-3">
+      <div class="col-lg-4 col-sm-12">
+        <div class="card border-0">
+          <div class="card-header title-transaction">
+            Recent transactions
+          </div>
+          <div class="card-body">
+            <div class="row row-cols-1 g-2">
+              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
+                <div>
+                  <p class="m-0 fw-bolder">Public of Gamer</p>
+                  <p class="m-0">Daily expense</p>
+                </div>
+                <div class="fw-bolder">+$40</div>
+              </div>
+              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
+                <div>
+                  <p class="m-0 fw-bolder">Public of Gamer</p>
+                  <p class="m-0">Daily expense</p>
+                </div>
+                <div class="fw-bolder">+$40</div>
+              </div>
+              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
+                <div>
+                  <p class="m-0 fw-bolder">Public of Gamer</p>
+                  <p class="m-0">Daily expense</p>
+                </div>
+                <div class="fw-bolder">+$40</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8 col-md-12">
+        <!-- Spending -->
+        <div class="card border-0">
+          <div class="card-header title-spend">
+            Spending
+          </div>
+          <div class="card-body">
+
+          </div>
+        </div>
+
+        <!-- Incoming -->
+        <div class="card border-0 mt-2">
+          <div class="card-header title-income">
+            Incoming
+          </div>
+          <div class="card-body">
+
+          </div>
+        </div>
       </div>
     </div>
   </section>

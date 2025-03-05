@@ -10,7 +10,9 @@ $warning: #F7C846;
 $danger: #DF5665;
 
 $body-bg: #F5F5F5;
+
 $card-bg: white;
+$card-cap-padding-y: 12px;
 
 // Import Bootstrap after setting variables
 @import "../../../../../node_modules/bootstrap/scss/variables";
