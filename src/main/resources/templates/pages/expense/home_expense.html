@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}">
+
+<head>
+  <title>Expense</title>
+
+  <script>
+    // TODO
+  </script>
+  <style>
+    /* TODO */
+  </style>
+</head>
+
+<body>
+  <section layout:fragment="page">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bolder">Expense management</h5>
+      <a href="/bussiness/add" class="btn btn-primary text-white">Create new expense</a>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Created at</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>Mark</td>
+          <td>22/02/2025</td>
+          <td class="d-flex justify-content-end">
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-pen text-warning"></i>
+            </button>
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-trash text-danger"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>Jacob</td>
+          <td>22/02/2025</td>
+          <td class="d-flex justify-content-end">
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-pen text-warning"></i>
+            </button>
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-trash text-danger"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>Larry the Bird</td>
+          <td>22/02/2025</td>
+          <td class="d-flex justify-content-end">
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-pen text-warning"></i>
+            </button>
+            <button type="button" class="btn py-0 px-1">
+              <i class="bi bi-trash text-danger"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+
+</html>

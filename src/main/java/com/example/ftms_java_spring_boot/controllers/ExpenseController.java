@@ -9,6 +9,6 @@ public class ExpenseController {
   // TODO
   @GetMapping("/expense")
   public String expenseHome(Model model) {
-    return "pages/expense";
+    return "pages/expense/home_expense";
   }
 }

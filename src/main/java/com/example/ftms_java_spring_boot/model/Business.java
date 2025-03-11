@@ -1,13 +1,15 @@
 package com.example.ftms_java_spring_boot.model;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "balances")
-public class Balance {
+@Table(name = "businesses")
+public class Business {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -15,11 +17,10 @@ public class Balance {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
-  private double balance = 0;
+  @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 
-  // https://chatgpt.com/share/67cae71f-a268-800b-8481-c0c846950dd9
-  // Many-to-One with User
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
@@ -28,12 +29,11 @@ public class Balance {
   private boolean disabled = false;
 
   // Constructors
-  public Balance() {
+  public Business() {
   }
 
-  public Balance(String name, double balance) {
+  public Business(String name) {
     this.name = name;
-    this.balance = balance;
   }
 
   // Getters and Setters
@@ -53,16 +53,19 @@ public class Balance {
     this.name = name;
   }
 
-  public double getBalance() {
-    return balance;
+  public String getCreatedAt() {
+    return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
   }
 
-  public String getBalanceFormatted() {
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
-    return currencyFormat.format(balance);
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
   }
 
-  public void setBalance(double balance) {
-    this.balance = balance;
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
   }
 }

@@ -45,6 +45,9 @@
       $("#btn-swicth-sidebar").click(function () {
         if (!isClose) {
           // Hide sidebar
+          $(".ftms-title").removeClass('fs-4');
+          $(".ftms-title").addClass('fs-6');
+
           $(this).removeClass('bi-arrow-left');
           $(this).addClass('bi-arrow-right');
           $('.nav-link > *:first-child').removeClass('me-2');
@@ -52,28 +55,30 @@
           $('#full-name').hide(400);
 
           $('.sidebar').css({
-            "transition": "width 0.5s ease",
-            "width": "80px"
+            "transition": "width 0.6s ease",
+            "width": "70px"
           });
           $('.content').css({
-            "transition": "margin-left 0.5s ease",
-            "margin-left": "80px"
+            "transition": "margin-left 0.6s ease",
+            "margin-left": "70px"
           });
         } else {
           // Show sidebar
+          $(".ftms-title").removeClass('fs-6');
+          $(".ftms-title").addClass('fs-4');
+
           $(this).removeClass('bi-arrow-right');
           $(this).addClass('bi-arrow-left');
           $('.nav-link > *:first-child').addClass('me-2');
           $('.nav-link > *:last-child').show(400);
           $('#full-name').show(400);
-          s2
           $('.sidebar').css({
-            "transition": "width 0.5s ease",
-            "width": "220px"
+            "transition": "width 0.6s ease",
+            "width": "230px"
           });
           $('.content').css({
-            "transition": "margin-left 0.5s ease",
-            "margin-left": "220px"
+            "transition": "margin-left 0.6s ease",
+            "margin-left": "230px"
           });
         }
 
@@ -158,10 +163,10 @@
     <nav class="sidebar d-flex flex-column flex-shrink-0 p-2">
       <a class="p-0 link-dark text-decoration-none">
         <div class="text-end">
-          <i id="btn-swicth-sidebar" class="bi bi-arrow-left"></i>
+          <i id="btn-swicth-sidebar" class="btn py-0 px-1 bi bi-arrow-left"></i>
         </div>
         <div class="text-center">
-          <span class="fs-4 fw-bolder">FTMS</span>
+          <span class="ftms-title fs-4 fw-bolder">FTMS</span>
         </div>
       </a>
       <hr>
@@ -191,9 +196,9 @@
           </a>
         </li>
         <li>
-          <a href="/bussiness" class="nav-link link-dark">
+          <a href="/business" class="nav-link link-dark">
             <i class="bi bi-buildings me-2"></i>
-            <span>Bussiness</span>
+            <span>Business</span>
           </a>
         </li>
         <li>
@@ -206,8 +211,8 @@
       <hr>
 
       <div class="dropdown">
-        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
-          data-bs-toggle="dropdown" aria-expanded="false">
+        <a href="#" class="ps-0 d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+          id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="https://cdn.pixabay.com/photo/2020/11/26/09/46/girl-5778431_1280.jpg" alt="" width="32" height="32"
             class="rounded-circle me-2">
           <strong id="full-name">Sonita Sao</strong>

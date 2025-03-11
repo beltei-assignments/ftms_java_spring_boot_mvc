@@ -9,6 +9,6 @@ public class IncomeController {
   // TODO
   @GetMapping("/income")
   public String incomeHome(Model model) {
-    return "pages/income";
+    return "pages/income/home_income";
   }
 }

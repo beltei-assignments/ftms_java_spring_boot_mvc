@@ -9,16 +9,30 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String name;
+  @Column(nullable = false, unique = true)
   private String email;
+
+  @Column(nullable = false)
+  private String firstName;
+
+  @Column(nullable = false)
+  private String lastName;
+
+  @Column(nullable = false)
+  private String password;
+
+  @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+  private boolean disabled = false;
 
   // Constructors
   public User() {
   }
 
-  public User(String name, String email) {
-    this.name = name;
+  public User(String email, String fName, String lName, String password) {
     this.email = email;
+    this.firstName = fName;
+    this.lastName = lName;
+    this.password = password;
   }
 
   // Getters and Setters
@@ -28,14 +42,6 @@ public class User {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getEmail() {

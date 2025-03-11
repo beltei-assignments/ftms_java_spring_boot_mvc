@@ -9,6 +9,6 @@ public class TransactionController {
   // TODO
   @GetMapping("/transaction")
   public String transactionHome(Model model) {
-    return "pages/transaction";
+    return "pages/transaction/home_transaction";
   }
 }

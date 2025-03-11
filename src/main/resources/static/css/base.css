@@ -86,3 +86,22 @@ body {
 .bi {
   font-size: 16px;
 }
+
+table {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+thead tr th {
+  background: var(--bs-primary-border-subtle) !important;
+}
+
+tbody tr td,
+tbody tr th {
+  overflow: hidden;
+  background-color: white !important;
+}
+
+input {
+  background: none !important;
+}
