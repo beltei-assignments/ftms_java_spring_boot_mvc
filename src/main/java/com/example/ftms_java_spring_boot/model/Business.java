@@ -68,4 +68,9 @@ public class Business {
   public void setDisabled(boolean disabled) {
     this.disabled = disabled;
   }
+
+public void setAmount(Double amount) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setAmount'");
+}
 }

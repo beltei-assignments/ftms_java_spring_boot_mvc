@@ -32,6 +32,10 @@ public class BalanceService {
     return balanceRepository.findAllBalances(user.get());
   }
 
+  public Optional<Balance> getById(Long id) {
+    return balanceRepository.findById(id);
+  }
+
   // public Optional<Business> getById(Long id) {
   // return businessRepository.findById(id);
   // }
