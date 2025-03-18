@@ -24,12 +24,12 @@
         <tr>
           <th scope="col">ID</th>
           <th scope="col">Business Name</th>
-          <th scope="col">Balance</th>
+          <th scope="col">Balance Name</th>
           <th scope="col">Amount</th>
           <th scope="col">Type</th>
           <th scope="col">Note</th>
-          <th scope="col">Created at</th>
-          <th scope="col">Action</th>
+          <th scope="col">Date Creation</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
@@ -37,7 +37,7 @@
           <th th:text="${transaction.id}"></th>
           <th th:text="${transaction.business.name}"></th>
           <th th:text="${transaction.balance.name}"></th>
-          <th th:text="${transaction.amount}"></th>
+          <th th:text="${transaction.amountFormatted}"></th>
           <th th:text="${transaction.transactionType}"></th>
           <th th:text="${transaction.notes}"></th>
           <th th:text="${transaction.createdAt}"></th>
