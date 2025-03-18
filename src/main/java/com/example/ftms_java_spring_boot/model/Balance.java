@@ -16,7 +16,7 @@ public class Balance {
   private String name;
 
   @Column(nullable = false)
-  private double balance = 0;
+  private double balance = 0.0;
 
   // https://chatgpt.com/share/67cae71f-a268-800b-8481-c0c846950dd9
   // Many-to-One with User

@@ -36,6 +36,16 @@ public class BalanceService {
     return balanceRepository.findById(id);
   }
 
+  public double getBalance(Long id) {
+    return balanceRepository.findById(id)
+        .map(Balance::getBalance)
+        .orElseThrow(() -> new RuntimeException("Balance not found"));
+  }
+
+  public void update(Balance balance) {
+    balanceRepository.save(balance);
+  }
+
   // public Optional<Business> getById(Long id) {
   // return businessRepository.findById(id);
   // }
@@ -50,10 +60,6 @@ public class BalanceService {
   // businessRepository.save(business);
 
   // return true;
-  // }
-
-  // public void update(Business business) {
-  // businessRepository.save(business);
   // }
 
   // public void deleteById(Long id) {

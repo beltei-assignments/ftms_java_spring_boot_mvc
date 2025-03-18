@@ -67,8 +67,10 @@ public class Transaction {
     return transactionType;
   }
 
-  public Optional<String> getNotes() {
-    return Optional.ofNullable(notes);
+  public String getNotes() {
+    if (notes.isEmpty()) return "";
+
+    return notes;
   }
 
   public double getAmount() {
