@@ -35,7 +35,7 @@
                     <!-- Business Name (Dropdown) -->
                     <div class="mb-3">
                         <label for="business" class="form-label">Business Name</label>
-                        <select name="business_id" id="business" class="form-control" required>
+                        <select name="business_id" id="business" class="form-control form-select" required>
                             <option value="">Select a Business</option>
                             <option th:each="business : ${businesses}" th:value="${business.id}"
                                 th:text="${business.name}"
@@ -47,7 +47,7 @@
                     <!-- Balance Name (Dropdown) -->
                     <div class="mb-3">
                         <label for="balance" class="form-label">Balance Name</label>
-                        <select name="balance_id" id="balance" class="form-control" required>
+                        <select name="balance_id" id="balance" class="form-control form-select" required>
                             <option value="">Select a Balance</option>
                             <option th:each="balance : ${balances}" th:value="${balance.id}"
                                 th:text="${balance.name}"

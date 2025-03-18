@@ -1,7 +1,9 @@
 package com.example.ftms_java_spring_boot.model;
 
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -68,13 +70,21 @@ public class Transaction {
   }
 
   public String getNotes() {
-    if (notes.isEmpty()) return "";
+    if (notes.isEmpty())
+      return "";
 
     return notes;
   }
 
   public double getAmount() {
     return amount;
+  }
+
+  public String getAmountFormatted() {
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+    String formatted = currencyFormat.format(amount);
+
+    return transactionType.equals("Expense") ? "-" + formatted : "+" + formatted;
   }
 
   public void setAmount(double amount) {

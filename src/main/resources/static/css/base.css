@@ -102,6 +102,6 @@ tbody tr th {
   background-color: white !important;
 }
 
-input {
-  background: none !important;
+input, select, textarea, option {
+  background-color: white !important;
 }
