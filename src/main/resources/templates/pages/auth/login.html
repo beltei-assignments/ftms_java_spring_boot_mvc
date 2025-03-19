@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/base}"
+>
+  <head>
+    <script>
+      // TODO
+    </script>
+    <style></style>
+  </head>
+
+  <body>
+    <section layout:fragment="content">
+      <div class="row g-0" style="height: 100vh">
+        <div class="col-lg-7 d-flex align-items-center bg-primary">
+          <div class="px-3 py-4 p-md-5 mx-md-4 text-white">
+            <h4 class="mb-4">Financial Tracking Management System</h4>
+            <p class="mb-0">
+              <strong>FTMS</strong> is a tool designed to help business owners
+              and investors monitor their financial activities, including
+              income, expenses, and investments. It provides real-time tracking,
+              budgeting, and reporting features to enhance financial
+              decision-making.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card-body p-md-5 mx-4">
+            <div class="text-center">
+              <!-- <img
+                          src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
+                          style="width: 185px"
+                          alt="logo"
+                        /> -->
+              <h4 class="mt-1 mb-5 pb-1">FTMS</h4>
+            </div>
+
+            <form action="/login" th:object="${User}" method="POST">
+              <p class="text-center">Please login to your account</p>
+
+              <!-- Email field -->
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form2Example11"
+                  >Email address</label
+                >
+                <input
+                  type="email"
+                  id="form2Example11"
+                  class="form-control"
+                  placeholder="Enter email address"
+                  th:field="*{email}"
+                />
+              </div>
+
+              <!-- Password field -->
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form2Example22">Password</label>
+                <input
+                  type="password"
+                  id="form2Example22"
+                  class="form-control"
+                  placeholder="Enter password"
+                  th:field="*{password}"
+                />
+              </div>
+
+              <div class="text-center pt-1 mb-5 pb-1">
+                <button
+                  data-mdb-button-init
+                  data-mdb-ripple-init
+                  class="btn btn-primary mb-3 w-100 text-white"
+                  type="submit"
+                >
+                  Log in
+                </button>
+                <a class="text-muted" href="#!">Forgot password?</a>
+              </div>
+
+              <div
+                class="d-flex align-items-center justify-content-center pb-4"
+              >
+                <p class="mb-0 me-2">Don't have an account?</p>
+                <button
+                  type="button"
+                  data-mdb-button-init
+                  data-mdb-ripple-init
+                  class="btn btn-outline-info"
+                >
+                  Create new
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
