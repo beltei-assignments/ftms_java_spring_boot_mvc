@@ -52,6 +52,7 @@
                   class="form-control"
                   placeholder="Enter email address"
                   th:field="*{email}"
+                  required
                 />
               </div>
 
@@ -64,9 +65,25 @@
                   class="form-control"
                   placeholder="Enter password"
                   th:field="*{password}"
+                  required
                 />
               </div>
-
+              <div
+                th:if="${message != null}"
+                class="alert alert-danger alert-dismissible fade show"
+                role="alert"
+              >
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                  <div th:text="${message}"></div>
+                </div>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
               <div class="text-center pt-1 mb-5 pb-1">
                 <button
                   data-mdb-button-init

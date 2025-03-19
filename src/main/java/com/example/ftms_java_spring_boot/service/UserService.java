@@ -1,12 +1,14 @@
 package com.example.ftms_java_spring_boot.service;
+
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.ftms_java_spring_boot.repository.UserRepository;
-import com.example.ftms_java_spring_boot.model.Business;
+
+import javassist.NotFoundException;
+
 import com.example.ftms_java_spring_boot.model.User;
 
 @Service
@@ -18,11 +20,19 @@ public class UserService {
     return userRepository.findAll();
   }
 
-  public User addUser(User user) {
+  public User saveUser(User user) {
     return userRepository.save(user);
   }
 
-  public Optional<User> getById(Long id) {
-    return userRepository.findById(id);
+  public User getById(Long id) throws NotFoundException {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+    return user;
+  }
+
+  public User getUserByEmail(String email) throws NotFoundException {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+    return user;
   }
 }

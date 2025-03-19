@@ -1,5 +1,7 @@
 package com.example.ftms_java_spring_boot.model;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -58,5 +60,15 @@ public class User {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void hashPassword(String password) {
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    this.password = encoder.encode(password); // Hash the password
+  }
+
+  public boolean verifyPassword(String rawPassword) {
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    return encoder.matches(rawPassword, this.password);
   }
 }

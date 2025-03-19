@@ -1,5 +1,6 @@
 -- Insert Users
-INSERT INTO users (email,first_name,last_name,`password`) VALUES ('admin@example.com','Chetra','HONG','123');
+INSERT INTO users (email,first_name,last_name,`password`) VALUES ('admin@example.com','Chetra','HONG','$2a$10$T/7NmYaRUNsSpi8uiNfExeJOS1AN8GiIzWxPQVhQrIj2Oc5zM4hPC');
+INSERT INTO users (email,first_name,last_name,`password`) VALUES ('dara@example.com','Dara','SOK','$2a$10$T/7NmYaRUNsSpi8uiNfExeJOS1AN8GiIzWxPQVhQrIj2Oc5zM4hPC');
 
 -- Insert Businesses
 INSERT INTO businesses (user_id, name) VALUES(1, 'FTMS Co,.Ltd');

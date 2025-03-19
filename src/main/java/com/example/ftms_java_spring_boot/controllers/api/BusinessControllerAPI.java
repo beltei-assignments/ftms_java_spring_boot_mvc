@@ -1,5 +1,6 @@
 package com.example.ftms_java_spring_boot.controllers.api;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class BusinessControllerAPI {
 
   @GetMapping
   public List<Business> getAllBusinesses() {
-    return businessService.getAll();
+    return Collections.emptyList();
+    // return businessService.getAll();
   }
 }

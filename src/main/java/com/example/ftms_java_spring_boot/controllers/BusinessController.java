@@ -8,23 +8,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.ftms_java_spring_boot.model.Business;
-
+import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.service.BusinessService;
+import com.example.ftms_java_spring_boot.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+import javassist.NotFoundException;
 
 @Controller
 public class BusinessController {
   @Autowired
+  private UserService userService;
   private BusinessService businessService;
 
-  public BusinessController(BusinessService businessService) {
+  public BusinessController(UserService userService, BusinessService businessService) {
+    this.userService = userService;
     this.businessService = businessService;
   }
 
   @GetMapping("/business")
-  public String businessHome(Model model) {
-    List<Business> businesses = businessService.getAll();
-    model.addAttribute("businesses", businesses);
-    return "pages/business/home_business";
+  public String businessHome(HttpSession session, Model model) {
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
+
+      List<Business> businesses = businessService.getAll(user);
+      model.addAttribute("businesses", businesses);
+
+      return "pages/business/home_business";
+    } catch (NotFoundException e) {
+      return "redirect:/login";
+    }
   }
 
   @GetMapping("/business/add")
@@ -49,19 +63,28 @@ public class BusinessController {
   // Create or Update business
   @PostMapping("/business")
   public String saveBusiness(
+      HttpSession session,
       @RequestParam("name") String name,
       @RequestParam("id") Optional<Long> id) {
 
-    if (id.isEmpty()) {
-      Business newBusiness = new Business(name);
-      businessService.create(newBusiness);
-    } else {
-      Business updateBusiness = businessService.getById(id.get()).get();
-      updateBusiness.setName(name);
-      businessService.update(updateBusiness);
-    }
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
 
-    return "redirect:/business";
+      if (id.isEmpty()) {
+        Business newBusiness = new Business(name);
+        newBusiness.setUser(user);
+        businessService.create(newBusiness);
+      } else {
+        Business updateBusiness = businessService.getById(id.get()).get();
+        updateBusiness.setName(name);
+        businessService.update(updateBusiness);
+      }
+
+      return "redirect:/business";
+    } catch (Exception e) {
+      return "redirect:/login";
+    }
   }
 
   // Delete business
