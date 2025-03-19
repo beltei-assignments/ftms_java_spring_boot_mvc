@@ -44,6 +44,17 @@ public class TransactionService {
     return transactionRepository.findAllExpenses(user.get());
   }
 
+  public List<Transaction> getUserIncomes() {
+    // Imprement User authentication later
+    Optional<User> user = userRepository.findById(1L);
+    // If user is not found return []
+    if (user.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    return transactionRepository.findAllIncomes(user.get());
+  }
+
   public Optional<Transaction> getById(Long id) {
     return transactionRepository.findById(id);
   }

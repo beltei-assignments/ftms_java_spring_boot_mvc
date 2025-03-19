@@ -41,7 +41,7 @@
           <th th:text="${transaction.transactionType}"></th>
           <th th:text="${transaction.notes}"></th>
           <th th:text="${transaction.createdAt}"></th>
-          <td class="d-flex justify-content-end">
+          <td class="d-flex justify-content-end ">
             <a th:href="@{/transaction/{id}(id=${transaction.id})}" class="btn py-0 px-1">
               <i class="bi bi-pen text-warning"></i>
             </a>
