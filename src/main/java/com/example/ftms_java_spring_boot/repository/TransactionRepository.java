@@ -17,4 +17,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
   // Custom query with @Query to filter by user to get all expenses
   @Query("SELECT e FROM Transaction e WHERE e.user = :user AND e.transactionType = 'Expense' AND e.disabled = false")
   List<Transaction> findAllExpenses(@Param("user") User user);
+
+  // Custom query with @Query to filter by user to get all expenses
+  @Query("SELECT e FROM Transaction e WHERE e.user = :user AND e.transactionType = 'Income' AND e.disabled = false")
+  List<Transaction> findAllIncomes(@Param("user") User user);
 }
