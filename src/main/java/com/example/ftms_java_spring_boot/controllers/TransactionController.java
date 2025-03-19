@@ -9,36 +9,55 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.Transaction;
+import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.service.BusinessService;
 import com.example.ftms_java_spring_boot.service.TransactionService;
+import com.example.ftms_java_spring_boot.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class TransactionController {
-
+  private final UserService userService;
   private final BusinessService businessService;
   private final TransactionService transactionService;
 
-  @Autowired
-  public TransactionController(BusinessService businessService, TransactionService transactionService) {
+  public TransactionController(UserService userService, BusinessService businessService,
+      TransactionService transactionService) {
+    this.userService = userService;
     this.transactionService = transactionService;
-      this.businessService = businessService;
+    this.businessService = businessService;
   }
 
-  // TODO
   @GetMapping("/transaction")
-  public String transactionHome(Model model) {
-    List<Transaction> transactions = transactionService.getAll();
-    model.addAttribute("transactions", transactions);
-    return "pages/transaction/home_transaction";
+  public String transactionHome(HttpSession session, Model model) {
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
+
+      List<Transaction> transactions = transactionService.getAll(user);
+      model.addAttribute("transactions", transactions);
+
+      return "pages/transaction/home_transaction";
+    } catch (Exception e) {
+      return "redirct:/login";
+    }
   }
 
   @GetMapping("/transaction/add")
-  public String transactionAdd(Model model) {
-    model.addAttribute("title", "Add new transaction");
+  public String transactionAdd(HttpSession session, Model model) {
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
 
-    List<Business> businesses = businessService.getAll();
-    model.addAttribute("businesses", businesses);
+      model.addAttribute("title", "Add new transaction");
 
-    return "pages/transaction/edit_transaction";
+      List<Business> businesses = businessService.getAll(user);
+      model.addAttribute("businesses", businesses);
+
+      return "pages/transaction/edit_transaction";
+    } catch (Exception e) {
+      return "redirct:/login";
+    }
   }
 }

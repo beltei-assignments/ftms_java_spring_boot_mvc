@@ -1,5 +1,6 @@
 package com.example.ftms_java_spring_boot.controllers.api;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public class BalanceControllerAPI {
 
   @GetMapping()
   public List<Balance> balanceHome(Model model) {
-    return balanceService.getAll();
+    return Collections.emptyList();
+    // return balanceService.getAll();
   }
 }

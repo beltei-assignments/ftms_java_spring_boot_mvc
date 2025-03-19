@@ -101,6 +101,13 @@
 				<artifactId>bootstrap-icons</artifactId>
 				<version>1.11.1</version> <!-- Use latest version -->
 		</dependency>
+
+		<!-- Password hashing -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.8.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
