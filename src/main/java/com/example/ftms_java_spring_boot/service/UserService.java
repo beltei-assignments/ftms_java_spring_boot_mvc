@@ -35,4 +35,10 @@ public class UserService {
         .orElseThrow(() -> new NotFoundException("User not found"));
     return user;
   }
+
+  public User findUserByCodeReset(String code) throws NotFoundException {
+    User user = userRepository.findByCodeReset(code)
+        .orElseThrow(() -> new NotFoundException("User not found"));
+    return user;
+  }
 }

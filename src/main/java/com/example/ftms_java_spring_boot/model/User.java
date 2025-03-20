@@ -1,5 +1,8 @@
 package com.example.ftms_java_spring_boot.model;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import jakarta.persistence.*;
@@ -22,6 +25,9 @@ public class User {
 
   @Column(nullable = false)
   private String password;
+
+  @Column(nullable = true, unique = true, length = 6)
+  private String codeReset;
 
   @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
   private boolean disabled = false;
@@ -70,5 +76,19 @@ public class User {
   public boolean verifyPassword(String rawPassword) {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     return encoder.matches(rawPassword, this.password);
+  }
+
+  public String getCodeReset() {
+    return codeReset;
+  }
+
+  public void setCodeReset() {
+    String randomCode = ThreadLocalRandom.current()
+        .ints(1, 10)
+        .distinct()
+        .limit(6)
+        .mapToObj(String::valueOf)
+        .collect(Collectors.joining());
+    this.codeReset = randomCode;
   }
 }

@@ -3,10 +3,14 @@ package com.example.ftms_java_spring_boot.controllers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.Arrays;
+
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 public class Security implements HandlerInterceptor {
+    private final String[] unprotectedRoutes = { "/login", "/forgot_password" };
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -14,8 +18,10 @@ public class Security implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
         String requestURI = request.getRequestURI();
 
+        boolean isMeetUnProtectedRoute = Arrays.asList(unprotectedRoutes).contains(requestURI);
+
         // Allow to login when there is no session userId and current route is /login
-        if (requestURI.equals("/login") && (session == null || session.getAttribute("userId") == null)) {
+        if (isMeetUnProtectedRoute && (session == null || session.getAttribute("userId") == null)) {
             return true;
         }
 
@@ -26,7 +32,7 @@ public class Security implements HandlerInterceptor {
         }
 
         // If the user is already logged in, prevent access to login
-        if (requestURI.equals("/login")) {
+        if (isMeetUnProtectedRoute) {
             // Redirect to default page
             response.sendRedirect("/");
             return false;
