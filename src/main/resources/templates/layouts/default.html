@@ -223,20 +223,20 @@
             aria-expanded="false"
           >
             <img
-              src="https://cdn.pixabay.com/photo/2020/11/26/09/46/girl-5778431_1280.jpg"
+              src="/images/user.jpg"
               alt=""
               width="32"
               height="32"
               class="rounded-circle me-2"
             />
-            <strong id="full-name">Sonita Sao</strong>
+            <strong th:text="${session.userFullName}" id="full-name"
+              >Sonita Sao</strong
+            >
           </a>
           <ul
             class="dropdown-menu text-small shadow"
             aria-labelledby="dropdownUser2"
           >
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
             <li><a class="dropdown-item" href="#">Profile</a></li>
             <li>
               <hr class="dropdown-divider" />

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 public class Security implements HandlerInterceptor {
-    private final String[] unprotectedRoutes = { "/login", "/forgot_password" };
+    private final String[] unprotectedRoutes = { "/login", "/forgot_password", "/verify_code" };
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

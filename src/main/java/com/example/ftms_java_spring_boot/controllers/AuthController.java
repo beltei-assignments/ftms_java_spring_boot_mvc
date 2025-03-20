@@ -54,6 +54,7 @@ public class AuthController {
 
             // Everything went fine
             session.setAttribute("userId", user.getId());
+            session.setAttribute("userFullName", user.getFirstName() + " " + user.getLastName());
             return "redirect:/";
 
         } catch (NotFoundException e) {
@@ -65,13 +66,31 @@ public class AuthController {
     }
 
     @PostMapping("/forgot_password")
-    public String login(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
+    public String forgotPassword(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
         try {
             User user = userService.getUserByEmail(email);
             user.setCodeReset();
-
             userService.saveUser(user);
-            mailService.sendEmail(user.getEmail(), "Reset New Password", user.getCodeReset());
+
+            String html = String
+                    .format("""
+                            <p>Dear <strong>%s</strong>,</p>
+
+                            <p>We received a request to reset your password. Please use the verification code below to proceed with resetting your password:</p>
+
+                            <p>Verification Code: <strong>%s</strong></p>
+
+                            <p>If you did not request this, please ignore this email.</p>
+
+                            <p>For security reasons, do not share this code with anyone.</p>
+
+                            <p>Best regards,</p>
+                            <p><strong>FTMS</strong></p>
+                            <p>contact@ftms.com</p>
+                            """,
+                            user.getFirstName() + " " + user.getLastName(), user.getCodeReset());
+
+            mailService.sendEmail(user.getEmail(), "Password Reset Verification Code", html);
 
             redirectAttributes.addFlashAttribute("success", "We have sent verification code to your email address.");
 
@@ -85,20 +104,25 @@ public class AuthController {
     }
 
     @PostMapping("/verify_code")
-    public String verifyCode(@RequestParam("code") String code, RedirectAttributes redirectAttributes) {
+    public String verifyCode(
+            @RequestParam("code") String code,
+            @RequestParam("password") String password,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findUserByCodeReset(code);
-            user.setCodeReset();
+            user.clearCodeReset();
+            user.hashPassword(password);
 
             userService.saveUser(user);
-            mailService.sendEmail(user.getEmail(), "Reset New Password", user.getCodeReset());
 
-            redirectAttributes.addFlashAttribute("success", "We have sent verification code to your email address.");
-
-            return "redirect:/forgot_password";
+            // Everything went fine
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userFullName", user.getFirstName() + " " + user.getLastName());
+            return "redirect:/";
 
         } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("message", "Imposible to send to this email address.");
+            redirectAttributes.addFlashAttribute("message", "Imposible to reset new password.");
             return "redirect:/forgot_password";
         }
 

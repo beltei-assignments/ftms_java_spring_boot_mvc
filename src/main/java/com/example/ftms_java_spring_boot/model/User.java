@@ -60,6 +60,14 @@ public class User {
     this.email = email;
   }
 
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
   public String getPassword() {
     return password;
   }
@@ -90,5 +98,9 @@ public class User {
         .mapToObj(String::valueOf)
         .collect(Collectors.joining());
     this.codeReset = randomCode;
+  }
+
+  public void clearCodeReset() {
+    this.codeReset = "";
   }
 }
