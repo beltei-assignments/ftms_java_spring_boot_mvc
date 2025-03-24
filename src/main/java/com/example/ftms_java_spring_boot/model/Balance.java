@@ -16,7 +16,7 @@ public class Balance {
   private String name;
 
   @Column(nullable = false)
-  private double balance = 0.0;
+  private double balance;
 
   // https://chatgpt.com/share/67cae71f-a268-800b-8481-c0c846950dd9
   // Many-to-One with User
@@ -65,4 +65,18 @@ public class Balance {
   public void setBalance(double balance) {
     this.balance = balance;
   }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
+  }
+
+public Balance orElseThrow(Object object) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+}
+
 }

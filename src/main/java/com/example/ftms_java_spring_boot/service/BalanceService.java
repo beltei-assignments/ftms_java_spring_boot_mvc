@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.ftms_java_spring_boot.model.Balance;
+import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.BalanceRepository;
+
+import javassist.NotFoundException;
 
 @Service
 public class BalanceService {
@@ -19,8 +22,12 @@ public class BalanceService {
     return balanceRepository.findAllBalances(user);
   }
 
-  public Optional<Balance> getById(Long id) {
-    return balanceRepository.findById(id);
+  public Balance getById(Long id) throws NotFoundException {
+    Balance balance = balanceRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Balance not found"));
+
+    return balance;
+    // return balanceRepository.findById(id);
   }
 
   public double getBalance(Long id) {
@@ -29,8 +36,15 @@ public class BalanceService {
         .orElseThrow(() -> new RuntimeException("Balance not found"));
   }
 
-  public void update(Balance balance) {
+  public void save(Balance balance) {
     balanceRepository.save(balance);
+  }
+
+  public void deleteById(Long id) throws NotFoundException {
+    Balance business = getById(id);
+    business.setDisabled(true);
+
+    save(business);
   }
 
   // public Optional<Business> getById(Long id) {

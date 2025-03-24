@@ -3,6 +3,8 @@ package com.example.ftms_java_spring_boot.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +32,15 @@ public class TransactionController {
   }
 
   @GetMapping("/transaction")
-  public String transactionHome(HttpSession session, Model model) {
+  public String transactionHome(HttpSession session, Pageable pageable, Model model) {
     try {
       Long userId = (Long) session.getAttribute("userId");
       User user = userService.getById(userId);
 
-      List<Transaction> transactions = transactionService.getAll(user);
+      // List<Transaction> transactions = transactionService.getAll(user);
+      // model.addAttribute("transactions", transactions);
+
+      Page<Transaction> transactions = transactionService.getAllPaginage(user, pageable);
       model.addAttribute("transactions", transactions);
 
       return "pages/transaction/home_transaction";

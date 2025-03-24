@@ -60,8 +60,8 @@
             <div class="card border-0 card-balance">
               <div class="card-body">
                 <h5 class="card-title">Balance</h5>
-                <h5 class="card-title">$ 99,600</h5>
-                <p class="card-text">74% then last month</p>
+                <h5 th:text="${totalBalance}" class="card-title"></h5>
+                <p class="card-text">For all accounts</p>
               </div>
             </div>
           </div>
@@ -70,8 +70,8 @@
             <div class="card border-0 card-expense">
               <div class="card-body">
                 <h5 class="card-title">Expense</h5>
-                <h5 class="card-title">$ 99,600</h5>
-                <p class="card-text">74% then last month</p>
+                <h5 th:text="${totalExpense}" class="card-title"></h5>
+                <p class="card-text">For this month</p>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
             <div class="card border-0 card-portfolio">
               <div class="card-body">
                 <h5 class="card-title">Portfolio</h5>
-                <h5 class="card-title">$ 99,600</h5>
+                <h5 th:text="${totalPortfilio}" class="card-title"></h5>
                 <p class="card-text">74% then last month</p>
               </div>
             </div>
@@ -90,8 +90,8 @@
             <div class="card border-0 card-income">
               <div class="card-body">
                 <h5 class="card-title">Income</h5>
-                <h5 class="card-title">$ 99,600</h5>
-                <p class="card-text">74% then last month</p>
+                <h5 th:text="${totalIncome}" class="card-title"></h5>
+                <p class="card-text">For this month</p>
               </div>
             </div>
           </div>
@@ -116,26 +116,13 @@
           </div>
           <div class="card-body">
             <div class="row row-cols-1 g-2">
-              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
+              <div th:each="transaction : ${transactions}"
+                class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
                 <div>
-                  <p class="m-0 fw-bolder">Public of Gamer</p>
-                  <p class="m-0">Daily expense</p>
+                  <p th:text="${transaction.balance.name}" class="m-0 fw-bolder"></p>
+                  <p th:text="${transaction.notes}" class="m-0"></p>
                 </div>
-                <div class="fw-bolder">+$40</div>
-              </div>
-              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
-                <div>
-                  <p class="m-0 fw-bolder">Public of Gamer</p>
-                  <p class="m-0">Daily expense</p>
-                </div>
-                <div class="fw-bolder">+$40</div>
-              </div>
-              <div class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
-                <div>
-                  <p class="m-0 fw-bolder">Public of Gamer</p>
-                  <p class="m-0">Daily expense</p>
-                </div>
-                <div class="fw-bolder">+$40</div>
+                <div th:text="${transaction.amountFormatted}" class="fw-bolder"></div>
               </div>
             </div>
           </div>

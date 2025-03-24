@@ -113,8 +113,7 @@ public class ExpenseController {
       User user = userService.getById(userId);
 
       Transaction expense;
-      Balance balance = balanceService.getById(balanceId)
-          .orElseThrow(() -> new RuntimeException("Balance not found"));
+      Balance balance = balanceService.getById(balanceId);
       Business business = businessService.getById(businessId)
           .orElseThrow(() -> new RuntimeException("Business not found"));
 
@@ -139,7 +138,7 @@ public class ExpenseController {
 
         // Update balance amount
         balance.setBalance(balance.getBalance() - amount);
-        balanceService.update(balance);
+        balanceService.save(balance);
 
         transactionService.create(expense);
       } else {
@@ -155,7 +154,7 @@ public class ExpenseController {
           // Restore amount to old balance
           Balance oldBalance = expense.getBalance();
           oldBalance.setBalance(oldBalance.getBalance() + expense.getAmount());
-          balanceService.update(oldBalance);
+          balanceService.save(oldBalance);
 
           // Deduct from new balance
           if (balance.getBalance() < amount) {
@@ -170,7 +169,7 @@ public class ExpenseController {
           balance.setBalance(balance.getBalance() - amountDifference);
         }
 
-        balanceService.update(balance);
+        balanceService.save(balance);
 
         // Update expense details
         expense.setBusiness(business);
@@ -206,7 +205,7 @@ public class ExpenseController {
       balance.setBalance(balance.getBalance() + expense.getAmount());
 
       // Update the balance first
-      balanceService.update(balance);
+      balanceService.save(balance);
 
       // Then delete the expense
       transactionService.deleteById(id);

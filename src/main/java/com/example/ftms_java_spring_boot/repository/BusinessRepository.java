@@ -11,6 +11,6 @@ import com.example.ftms_java_spring_boot.model.User;
 
 public interface BusinessRepository extends JpaRepository<Business, Long> {
   // Custom query with @Query to filter by user
-  @Query("SELECT b FROM Business b WHERE b.disabled = false AND user = :user")
+  @Query("SELECT b FROM Business b WHERE b.disabled = false AND user = :user ORDER BY createdAt DESC")
   List<Business> findAllBusinesses(@Param("user") User user);
 }

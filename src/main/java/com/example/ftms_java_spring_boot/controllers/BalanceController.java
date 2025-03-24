@@ -1,12 +1,14 @@
 package com.example.ftms_java_spring_boot.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ftms_java_spring_boot.model.Balance;
+import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.service.BalanceService;
@@ -44,6 +46,60 @@ public class BalanceController {
       return "pages/balance/home_balance";
     } catch (NotFoundException e) {
       return "redirect:/login";
+    }
+  }
+
+  @GetMapping("/balance/add")
+  public String businessAdd(Model model) {
+    Balance balance = new Balance();
+    model.addAttribute("title", "Add new balance account");
+    model.addAttribute("Balance", balance);
+
+    return "pages/balance/edit_balance";
+  }
+
+  @GetMapping("/balance/{id}")
+  public String businessEdit(@PathVariable Long id, Model model) {
+    try {
+      Balance balance = balanceService.getById(id);
+
+      model.addAttribute("title", "Update balance");
+      model.addAttribute("Balance", balance);
+
+      return "pages/balance/edit_balance";
+    } catch (NotFoundException e) {
+      return "redirect:/balance";
+    }
+  }
+
+  // Create or Update balance
+  @PostMapping("/balance")
+  public String saveBusiness(
+      HttpSession session,
+      @ModelAttribute("User") Balance balance) {
+
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
+      balance.setUser(user);
+
+      balanceService.save(balance);
+
+      return "redirect:/balance";
+    } catch (Exception e) {
+      return "redirect:/login";
+    }
+  }
+
+  // Delete balance
+  @GetMapping("/balance/delete/{id}")
+  public String deleteBusiness(@PathVariable Long id) {
+    try {
+      balanceService.deleteById(id);
+
+      return "redirect:/balance";
+    } catch (NotFoundException e) {
+      return "redirect:/balance";
     }
   }
 }

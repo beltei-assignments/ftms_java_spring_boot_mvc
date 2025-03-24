@@ -17,6 +17,7 @@ import com.example.ftms_java_spring_boot.service.BalanceService;
 import com.example.ftms_java_spring_boot.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
+import javassist.NotFoundException;
 
 import com.example.ftms_java_spring_boot.service.TransactionService;
 
@@ -101,6 +102,7 @@ public class IncomeController {
   // Create or Update Expense
   @PostMapping("/income")
   public String saveIncome(
+      HttpSession session,
       @RequestParam("business_id") Long businessId,
       @RequestParam("amount") Double amount,
       @RequestParam("balance_id") Long balanceId,
@@ -109,9 +111,11 @@ public class IncomeController {
       Model model) {
 
     try {
+      Long userId = (Long) session.getAttribute("userId");
+      User user = userService.getById(userId);
+
       Transaction income;
-      Balance balance = balanceService.getById(balanceId)
-          .orElseThrow(() -> new RuntimeException("Balance not found"));
+      Balance balance = balanceService.getById(balanceId);
       Business business = businessService.getById(businessId)
           .orElseThrow(() -> new RuntimeException("Business not found"));
 
@@ -123,10 +127,11 @@ public class IncomeController {
         income.setAmount(amount);
         income.setNotes(Optional.ofNullable(notes));
         income.setTransactionType("Income");
+        income.setUser(user);
 
         // Add amount to balance
         balance.setBalance(balance.getBalance() + amount);
-        balanceService.update(balance);
+        balanceService.save(balance);
         transactionService.create(income);
       } else {
         // Updating an existing income
@@ -140,17 +145,17 @@ public class IncomeController {
         if (!oldBalance.getId().equals(balanceId)) {
           // Remove amount from old balance
           oldBalance.setBalance(oldBalance.getBalance() - oldAmount);
-          balanceService.update(oldBalance);
+          balanceService.save(oldBalance);
 
           // Add to new balance
           balance.setBalance(balance.getBalance() + amount);
-          balanceService.update(balance);
+          balanceService.save(balance);
         } else {
           // Same balance, just update the difference
           double difference = amount - oldAmount;
           // Update balance with the difference
           balance.setBalance(balance.getBalance() + difference);
-          balanceService.update(balance);
+          balanceService.save(balance);
         }
 
         // Update income details
@@ -161,6 +166,8 @@ public class IncomeController {
         transactionService.update(income);
       }
 
+      return "redirect:/income";
+    } catch (NotFoundException e) {
       return "redirect:/income";
     } catch (RuntimeException e) {
       return "redirect:/income";
@@ -182,7 +189,7 @@ public class IncomeController {
       balance.setBalance(balance.getBalance() - income.getAmount());
 
       // Update the balance first
-      balanceService.update(balance);
+      balanceService.save(balance);
 
       // Then delete the income
       transactionService.deleteById(id);
@@ -193,13 +200,5 @@ public class IncomeController {
       // For now, just redirect to income page
       return "redirect:/income";
     }
-  }
-
-  // Add this method to handle errors if needed
-  @ExceptionHandler(RuntimeException.class)
-  public String handleError(RuntimeException ex, Model model) {
-    model.addAttribute("error", ex.getMessage());
-
-    return "redirect:/income";
   }
 }
