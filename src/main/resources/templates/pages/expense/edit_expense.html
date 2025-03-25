@@ -15,10 +15,12 @@
 
 <body>
     <section layout:fragment="page">
+        <!-- Error message -->
         <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Error:</strong> <span th:text="${error}"></span>
+            <span th:text="${error}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+
         <form action="/expense" method="POST">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 th:text="${title}" class="fw-bolder"></h5>
@@ -48,9 +50,9 @@
                     <div class="mb-3">
                         <label for="balance" class="form-label">Balance Name</label>
                         <select name="balance_id" id="balance" class="form-control form-select" required>
-                            <option value="">Select a Balance</option>
+                            <option disabled value="">Select a Balance</option>
                             <option th:each="balance : ${balances}" th:value="${balance.id}"
-                                th:text="${balance.name}"
+                                th:text="${ balance.name + ' ( ' + balance.balanceFormatted + ' )' }"
                                 th:selected="${expense != null && expense.balance.id == balance.id}">
                             </option>
                         </select>

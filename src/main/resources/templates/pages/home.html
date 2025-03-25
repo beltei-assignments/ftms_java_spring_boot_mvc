@@ -3,9 +3,7 @@
   layout:decorate="~{layouts/default}">
 
 <head>
-  <script>
-    // TODO
-  </script>
+
   <style>
     .card-balance {
       background-color: var(--bs-primary-border-subtle);
@@ -81,7 +79,7 @@
               <div class="card-body">
                 <h5 class="card-title">Portfolio</h5>
                 <h5 th:text="${totalPortfilio}" class="card-title"></h5>
-                <p class="card-text">74% then last month</p>
+                <p class="card-text">For this month</p>
               </div>
             </div>
           </div>
@@ -99,9 +97,10 @@
       </div>
 
       <div class="col-lg-6 col-md-12">
-        <div class="card border-0 bg-primary h-100 text-white">
+        <div class="bg-primary card border-0 h-100 text-white">
           <div class="card-body">
-            Spending
+            <p class="text-white fw-bolder">Incoming</p>
+            <canvas id="myChart"></canvas>
           </div>
         </div>
       </div>
@@ -109,14 +108,30 @@
 
     <!-- Section 2 -->
     <div class="row mt-0 g-3">
-      <div class="col-lg-4 col-sm-12">
+      <div class="col-lg-6 col-sm-12">
         <div class="card border-0">
-          <div class="card-header title-transaction">
-            Recent transactions
+          <div class="card-header title-transaction d-flex justify-content-between">
+            <span>Recent transactions</span>
+
+            <div class="dropdown">
+              <a href="#" class="ps-0 d-flex align-items-center link-dark text-decoration-none" id="dropdownUser2"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots"></i>
+              </a>
+              <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                <li>
+                  <a class="dropdown-item bg-body" href="/transaction">
+                    <i class="bi bi-eye text-warning"></i>
+                    <span class="ms-2">See more</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
+
           <div class="card-body">
             <div class="row row-cols-1 g-2">
-              <div th:each="transaction : ${transactions}"
+              <div th:each="transaction : ${transactions.content}"
                 class="col rounded-2 px-2 py-1 d-flex justify-content-between align-items-center trasaction-rows">
                 <div>
                   <p th:text="${transaction.balance.name}" class="m-0 fw-bolder"></p>
@@ -129,7 +144,7 @@
         </div>
       </div>
 
-      <div class="col-lg-8 col-md-12">
+      <div class="col-lg-6 col-md-12">
         <!-- Spending -->
         <div class="card border-0">
           <div class="card-header title-spend">
@@ -151,7 +166,64 @@
         </div>
       </div>
     </div>
+
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      const weeklyIncomes = /*[[${weeklyIncomes}]]*/[];
+      /*]]>*/
+    </script>
+
+    <script>
+      const ctx = document.getElementById('myChart');
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          datasets: [{
+            label: "This week ($)",
+            data: weeklyIncomes,
+            backgroundColor: ["#F7C846"],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              ticks: {
+                color: "#FFFFFF", // Change label color here
+                font: {
+                  size: 14, // Font size
+                }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: "#FFFFFF", // Change label color here
+                font: {
+                  size: 14
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                font: {
+                  size: 14, // Font size
+                  family: "'Arial', sans-serif"
+                },
+                color: "#FFFFFF" // Font color
+              }
+            }
+          }
+        }
+      });
+    </script>
   </section>
+
 </body>
 
 </html>

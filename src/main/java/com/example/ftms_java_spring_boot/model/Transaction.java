@@ -1,6 +1,7 @@
 package com.example.ftms_java_spring_boot.model;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -95,7 +96,11 @@ public class Transaction {
     this.notes = notes.orElse(null);
   }
 
-  public String getCreatedAt() {
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public String getCreatedAtFormatted() {
     return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
   }
 
