@@ -99,6 +99,7 @@ public class ExpenseController {
 
       List<Balance> balances = balanceService.getAll(user);
       model.addAttribute("balances", balances);
+
       return "pages/expense/edit_expense";
     } catch (Exception e) {
       return "redirect:/login";
@@ -230,6 +231,7 @@ public class ExpenseController {
   @ExceptionHandler(RuntimeException.class)
   public String handleError(RuntimeException ex, Model model) {
     model.addAttribute("error", ex.getMessage());
+
     return "redirect:/expense";
   }
 }

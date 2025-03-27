@@ -45,9 +45,11 @@ public class HomeController {
 
             List<Balance> balances = balanceService.getAll(user);
 
-            Pageable pageableTransactions = PageRequest.of(0, 10);
+            Pageable pageableTransactions = PageRequest.of(0, 5);
             Page<Transaction> transactions = transactionService.getAllWithPagination(pageableTransactions, user,
                     Optional.empty());
+
+            List<Object[]> expenses = transactionService.getTransactionBusinesses();
 
             // double totalBalance = balances.stream()
             // .mapToDouble(Balance::getBalance)
@@ -75,6 +77,7 @@ public class HomeController {
             model.addAttribute("totalPortfilio", currencyFormat.format(totalPortfilio));
             model.addAttribute("weeklyIncomes", weeklyIncomes);
             model.addAttribute("transactions", transactions);
+            model.addAttribute("expenses", expenses);
 
             return "pages/home";
         } catch (NotFoundException e) {

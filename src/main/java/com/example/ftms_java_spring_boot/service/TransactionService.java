@@ -36,13 +36,11 @@ public class TransactionService {
       Pageable pageable,
       User user,
       Optional<String> type) {
-    // return transactionRepository.findAllTransactionsPaginate(user, pageable);
 
-    Specification<Transaction> spec = (root, query, criteriaBuilder) -> {
+    Specification<Transaction> filters = (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
       // Filter by User
-
       predicates.add(criteriaBuilder.equal(root.get("user"), user));
       predicates.add(criteriaBuilder.equal(root.get("disabled"), false));
 
@@ -55,7 +53,7 @@ public class TransactionService {
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };
 
-    return transactionRepository.findAll(spec, pageable);
+    return transactionRepository.findAll(filters, pageable);
   }
 
   public List<Transaction> getUserExpenses(User user) {
@@ -87,6 +85,10 @@ public class TransactionService {
       amounts.add(transactionMap.getOrDefault(fullDayName, 0.0)); // Default to 0 if no data
     }
     return amounts;
+  }
+
+  public List<Object[]> getTransactionBusinesses() {
+    return transactionRepository.getTransactionBusinesses();
   }
 
   public Optional<Transaction> getById(Long id) {
