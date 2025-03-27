@@ -3,7 +3,12 @@ package com.example.ftms_java_spring_boot.controllers;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,26 +44,40 @@ public class HomeController {
             User user = userService.getById(userId);
 
             List<Balance> balances = balanceService.getAll(user);
-            List<Transaction> transactions = transactionService.getAll(user);
 
-            double totalBalance = balances.stream()
-                    .mapToDouble(Balance::getBalance)
-                    .sum();
-            double totalExpense = transactions.stream()
-                    .filter(trans -> trans.getTransactionType().equals("Expense"))
-                    .mapToDouble(Transaction::getAmount)
-                    .sum();
-            double totalIncome = transactions.stream()
-                    .filter(trans -> trans.getTransactionType().equals("Income"))
-                    .mapToDouble(Transaction::getAmount)
-                    .sum();
-            double totalPortfilio = totalIncome - totalExpense;
+            Pageable pageableTransactions = PageRequest.of(0, 5);
+            Page<Transaction> transactions = transactionService.getAllWithPagination(pageableTransactions, user,
+                    Optional.empty());
+
+            List<Object[]> expenses = transactionService.getTransactionBusinesses();
+
+            // double totalBalance = balances.stream()
+            // .mapToDouble(Balance::getBalance)
+            // .sum();
+            // double totalExpense = transactions.stream()
+            // .filter(trans -> trans.getTransactionType().equals("Expense"))
+            // .mapToDouble(Transaction::getAmount)
+            // .sum();
+            // double totalIncome = transactions.stream()
+            // .filter(trans -> trans.getTransactionType().equals("Income"))
+            // .mapToDouble(Transaction::getAmount)
+            // .sum();
+            // double totalPortfilio = totalIncome - totalExpense;
+
+            double totalBalance = 0;
+            double totalExpense = 0;
+            double totalIncome = 0;
+            double totalPortfilio = 0;
+
+            List<Double> weeklyIncomes = transactionService.getWeeklyIncomes();
 
             model.addAttribute("totalBalance", currencyFormat.format(totalBalance));
             model.addAttribute("totalExpense", currencyFormat.format(totalExpense));
             model.addAttribute("totalIncome", currencyFormat.format(totalIncome));
             model.addAttribute("totalPortfilio", currencyFormat.format(totalPortfilio));
+            model.addAttribute("weeklyIncomes", weeklyIncomes);
             model.addAttribute("transactions", transactions);
+            model.addAttribute("expenses", expenses);
 
             return "pages/home";
         } catch (NotFoundException e) {

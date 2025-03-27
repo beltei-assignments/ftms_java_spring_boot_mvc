@@ -50,7 +50,7 @@
                         <select name="balance_id" id="balance" class="form-control form-select" required>
                             <option value="">Select a Balance</option>
                             <option th:each="balance : ${balances}" th:value="${balance.id}"
-                                th:text="${balance.name}"
+                                th:text="${ balance.name + ' ( ' + balance.balanceFormatted + ' )' }"
                                 th:selected="${income != null && income.balance.id == balance.id}">
                             </option>
                         </select>

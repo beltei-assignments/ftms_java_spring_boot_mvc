@@ -15,12 +15,14 @@ INSERT INTO balances (user_id, name, balance) VALUES(1, 'Company expenses', 3000
 INSERT INTO balances (user_id, name, balance) VALUES(1, 'For investments', 8000);
 
 -- Insert Transactions
+-- Expense
 INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 1, 1, 150, 'Expense', 'Electronic City');
-INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 2, 1, 100, 'Expense', 'Electronic City');
+INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 2, 1, 100, 'Expense', 'Wifi');
 INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 3, 1, 130, 'Expense', 'Electronic City');
 INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 4, 1, 140, 'Expense', 'Electronic City');
 
-INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 1, 1, 500, 'Income', 'Daily income');
-INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 2, 1, 300, 'Income', 'Daily income');
-INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 3, 1, 530, 'Income', 'Daily income');
-INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes) VALUES(1, 4, 1, 840, 'Income', 'Daily income');
+-- Income
+INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes, created_at) VALUES(1, 1, 1, 500, 'Income', 'Daily income', '2025-03-24 17:57:38');
+INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes, created_at) VALUES(1, 2, 1, 300, 'Income', 'Daily income', '2025-03-24 17:57:38');
+INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes, created_at) VALUES(1, 3, 1, 530, 'Income', 'Daily income', '2025-03-25 17:57:38');
+INSERT INTO transactions (user_id, business_id, balance_id, amount, transaction_type, notes, created_at) VALUES(1, 4, 1, 840, 'Income', 'Daily income', '2025-03-25 17:57:38');

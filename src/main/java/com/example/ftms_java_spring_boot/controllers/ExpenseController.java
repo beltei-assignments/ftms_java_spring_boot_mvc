@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +41,18 @@ public class ExpenseController {
   }
 
   @GetMapping("/expense")
-  public String expenseHome(HttpSession session, Model model) {
+  public String expenseHome(
+      HttpSession session,
+      @RequestParam(defaultValue = "0") int page,
+      Model model) {
     try {
+      Pageable pageable = PageRequest.of(page, 10);
       Long userId = (Long) session.getAttribute("userId");
       User user = userService.getById(userId);
 
-      List<Transaction> transactions = transactionService.getUserExpenses(user);
-      model.addAttribute("expenses", transactions);
+      Page<Transaction> expenses = transactionService.getAllWithPagination(pageable, user,
+          Optional.of("Expense"));
+      model.addAttribute("expenses", expenses);
 
       return "pages/expense/home_expense";
     } catch (Exception e) {
@@ -91,6 +99,7 @@ public class ExpenseController {
 
       List<Balance> balances = balanceService.getAll(user);
       model.addAttribute("balances", balances);
+
       return "pages/expense/edit_expense";
     } catch (Exception e) {
       return "redirect:/login";
@@ -120,7 +129,7 @@ public class ExpenseController {
       if (id.isEmpty()) {
         // Creating a new expense
         if (balance.getBalance() < amount) {
-          model.addAttribute("error", "Insufficient balance. Available: $" + balance.getBalance());
+          model.addAttribute("error", "Insufficient balance. Available only: " + balance.getBalanceFormatted());
           model.addAttribute("title", "Add Expense");
           model.addAttribute("businesses", businessService.getAll(user));
           model.addAttribute("balances", balanceService.getAll(user));
@@ -222,6 +231,7 @@ public class ExpenseController {
   @ExceptionHandler(RuntimeException.class)
   public String handleError(RuntimeException ex, Model model) {
     model.addAttribute("error", ex.getMessage());
+
     return "redirect:/expense";
   }
 }

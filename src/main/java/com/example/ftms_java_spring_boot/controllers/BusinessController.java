@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.example.ftms_java_spring_boot.model.Business;
+import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.service.BusinessService;
 import com.example.ftms_java_spring_boot.service.UserService;
@@ -27,12 +31,16 @@ public class BusinessController {
   }
 
   @GetMapping("/business")
-  public String businessHome(HttpSession session, Model model) {
+  public String businessHome(
+      HttpSession session,
+      @RequestParam(defaultValue = "0") int page,
+      Model model) {
     try {
       Long userId = (Long) session.getAttribute("userId");
       User user = userService.getById(userId);
 
-      List<Business> businesses = businessService.getAll(user);
+      Pageable pageable = PageRequest.of(page, 10);
+      Page<Business> businesses = businessService.getAllWithPagination(pageable, user);
       model.addAttribute("businesses", businesses);
 
       return "pages/business/home_business";
@@ -44,6 +52,7 @@ public class BusinessController {
   @GetMapping("/business/add")
   public String businessAdd(Model model) {
     model.addAttribute("title", "Add new business");
+
     return "pages/business/edit_business";
   }
 
@@ -57,6 +66,7 @@ public class BusinessController {
 
     model.addAttribute("title", "Update business");
     model.addAttribute("business", business.get());
+
     return "pages/business/edit_business";
   }
 

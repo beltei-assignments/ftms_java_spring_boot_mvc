@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +41,18 @@ public class IncomeController {
   }
 
   @GetMapping("/income")
-  public String incomeHome(HttpSession session, Model model) {
+  public String incomeHome(
+      HttpSession session,
+      @RequestParam(defaultValue = "0") int page,
+      Model model) {
     try {
+      Pageable pageable = PageRequest.of(page, 10);
       Long userId = (Long) session.getAttribute("userId");
       User user = userService.getById(userId);
 
-      List<Transaction> transactions = transactionService.getUserIncomes(user);
-      model.addAttribute("incomes", transactions);
+      Page<Transaction> incomes = transactionService.getAllWithPagination(
+          pageable, user, Optional.of("Income"));
+      model.addAttribute("incomes", incomes);
 
       return "pages/income/home_income";
     } catch (Exception e) {

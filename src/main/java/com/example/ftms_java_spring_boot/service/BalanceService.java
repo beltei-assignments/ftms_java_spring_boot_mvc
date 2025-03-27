@@ -1,16 +1,22 @@
 package com.example.ftms_java_spring_boot.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.ftms_java_spring_boot.model.Balance;
 import com.example.ftms_java_spring_boot.model.Business;
+import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.BalanceRepository;
 
+import jakarta.persistence.criteria.Predicate;
 import javassist.NotFoundException;
 
 @Service
