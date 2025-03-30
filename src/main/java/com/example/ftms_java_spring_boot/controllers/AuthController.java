@@ -38,7 +38,6 @@ public class AuthController {
 
     @GetMapping("/forgot_password")
     public String forgotPasswordHome(Model model) {
-        model.addAttribute("success", "dsd");
         return "pages/auth/forgot_password";
     }
 
