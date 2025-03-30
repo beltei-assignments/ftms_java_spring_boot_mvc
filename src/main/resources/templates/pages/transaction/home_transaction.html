@@ -1,75 +1,159 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{layouts/default}">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}"
+>
+  <head>
+    <title>Transaction</title>
 
-<head>
-  <title>Transaction</title>
+    <script>
+      // TODO
+    </script>
+    <style>
+      /* TODO */
+    </style>
+  </head>
 
-  <script>
-    // TODO
-  </script>
-  <style>
-    /* TODO */
-  </style>
-</head>
-
-<body>
-  <section layout:fragment="page">
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-      <h5 class="fw-bolder">Transaction management</h5>
-      <div>
-        <a href="/income/add" class="btn btn-primary text-white">Create new income</a>
-        <a href="/expense/add" class="btn btn-primary text-white">Create new expense</a>
+  <body>
+    <section layout:fragment="page">
+      <div class="mb-3 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bolder">Transaction management</h5>
+        <div>
+          <a href="/income/add" class="btn btn-primary text-white">
+            <i class="bi bi-plus-circle-dotted"></i>
+            Create new income
+          </a>
+          <a href="/expense/add" class="btn btn-primary text-white">
+            <i class="bi bi-plus-circle-dotted"></i>
+            Create new expense
+          </a>
+        </div>
       </div>
-    </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Business Name</th>
-          <th scope="col">Balance Name</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Type</th>
-          <th scope="col">Note</th>
-          <th scope="col">Date Creation</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="transaction : ${transactions.content}">
-          <th th:text="${transaction.id}"></th>
-          <th th:text="${transaction.business.name}"></th>
-          <th th:text="${transaction.balance.name}"></th>
-          <th th:text="${transaction.amountFormatted}"></th>
-          <th th:text="${transaction.transactionType}"></th>
-          <th th:text="${transaction.notes}"></th>
-          <th th:text="${transaction.createdAtFormatted}"></th>
-        </tr>
-      </tbody>
-    </table>
+      <!-- Fitlers -->
+      <div class="card border-0 p-3 mb-3">
+        <form>
+          <div class="row">
+            <div class="col-6">
+              <select name="businessId" class="form-control form-select">
+                <option value="">Select a business</option>
+                <option
+                  th:each="business : ${businesses}"
+                  th:text="${business.name}"
+                  th:value="${business.id}"
+                  th:selected="${business.id == session.businessIdTransaction}"
+                ></option>
+              </select>
+            </div>
+            <div class="col-6">
+              <select name="balanceId" class="form-control form-select">
+                <option value="">Select a balance</option>
+                <option
+                  th:each="balance : ${balances}"
+                  th:text="${balance.name}"
+                  th:value="${balance.id}"
+                  th:selected="${balance.id == session.balanceIdTransaction}"
+                ></option>
+              </select>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-2">
+            <a
+              href="/transaction/clear-filters"
+              class="btn btn-outline-danger btn-sm me-1"
+            >
+              <i class="bi bi-trash2"></i>
+              Clear
+            </a>
+            <button class="btn btn-warning btn-sm">
+              <i class="bi bi-funnel"></i>
+              Filter
+            </button>
+          </div>
+        </form>
+      </div>
 
-    <!-- Pagination -->
-    <nav class="d-flex justify-content-end">
-      <ul class="pagination">
-        <li class="page-item"><a class="page-link"
-            th:href="@{/transaction(page=0, size=${transactions.size})}">First</a></li>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Business Name</th>
+            <th scope="col">Balance Name</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Type</th>
+            <th scope="col">Note</th>
+            <th scope="col">Date Creation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <th
+            th:if="${ !transactions.hasContent }"
+            class="text-center"
+            colspan="7"
+          >
+            No transactions available
+          </th>
 
-        <li class="page-item"><a class="page-link" th:if="${transactions.hasPrevious}"
-            th:href="@{/transaction(page=${transactions.number - 1}, size=${transactions.size})}">Previous</a></li>
+          <tr th:each="transaction : ${transactions.content}">
+            <th th:text="${transaction.id}"></th>
+            <th th:text="${transaction.business.name}"></th>
+            <th th:text="${transaction.balance.name}"></th>
+            <th th:text="${transaction.amountFormatted}"></th>
+            <th th:text="${transaction.transactionType}"></th>
+            <th th:text="${transaction.notes}"></th>
+            <th th:text="${transaction.createdAtFormatted}"></th>
+          </tr>
+        </tbody>
+      </table>
 
-        <li class="page-item disabled"><a class="page-link">
-            <span>Page <span th:text="${transactions.number + 1}"></span> of <span
-                th:text="${transactions.totalPages}"></span></span>
-          </a></li>
+      <!-- Pagination -->
+      <nav class="d-flex justify-content-end">
+        <ul class="pagination">
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:href="@{/transaction(page=0, size=${transactions.size})}"
+              >First</a
+            >
+          </li>
 
-        <li class="page-item"><a class="page-link" th:if="${transactions.hasNext}"
-            th:href="@{/transaction(page=${transactions.number + 1}, size=${transactions.size})}">Next</a></li>
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:if="${transactions.hasPrevious}"
+              th:href="@{/transaction(page=${transactions.number - 1}, size=${transactions.size})}"
+              >Previous</a
+            >
+          </li>
 
-        <li class="page-item"><a class="page-link"
-            th:href="@{/transaction(page=${transactions.totalPages - 1}, size=${transactions.size})}">Last</a></li>
-      </ul>
-    </nav>
-  </section>
-</body>
+          <li class="page-item disabled">
+            <a class="page-link">
+              <span
+                >Page <span th:text="${transactions.number + 1}"></span> of
+                <span th:text="${transactions.totalPages}"></span
+              ></span>
+            </a>
+          </li>
 
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:if="${transactions.hasNext}"
+              th:href="@{/transaction(page=${transactions.number + 1}, size=${transactions.size})}"
+              >Next</a
+            >
+          </li>
+
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:href="@{/transaction(page=${transactions.totalPages - 1}, size=${transactions.size})}"
+              >Last</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </section>
+  </body>
 </html>

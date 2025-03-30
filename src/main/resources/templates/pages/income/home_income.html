@@ -1,79 +1,163 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{layouts/default}">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/default}"
+>
+  <head>
+    <title>Income</title>
 
-<head>
-  <title>Income</title>
+    <script>
+      // TODO
+    </script>
+    <style>
+      /* TODO */
+    </style>
+  </head>
 
-  <script>
-    // TODO
-  </script>
-  <style>
-    /* TODO */
-  </style>
-</head>
+  <body>
+    <section layout:fragment="page">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bolder">Income management</h5>
+        <a href="/income/add" class="btn btn-primary text-white">
+          <i class="bi bi-plus-circle-dotted"></i>
+          Create new income
+        </a>
+      </div>
 
-<body>
-  <section layout:fragment="page">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="fw-bolder">Income management</h5>
-      <a href="/income/add" class="btn btn-primary text-white">Create new income</a>
-    </div>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">ID</th>
-          <th scope="col">Business Name</th>
-          <th scope="col">Balance</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Notes</th>
-          <th scope="col">Date Creation</th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="income : ${incomes.content}">
-          <th th:text="${income.id}"></th>
-          <th th:text="${income.business.name}"></th>
-          <th th:text="${income.balance.name}"></th>
-          <th th:text="${income.amountFormatted}"></th>
-          <th th:text="${income.notes}"></th>
-          <th th:text="${income.createdAtFormatted}"></th>
-          <td class="d-flex justify-content-end">
-            <a th:href="@{/income/{id}(id=${income.id})}" class="btn py-0 px-1">
-              <i class="bi bi-pen text-warning"></i>
+      <!-- Filters -->
+      <div class="card border-0 p-3 mb-3">
+        <form>
+          <div class="row">
+            <div class="col-6">
+              <select name="businessId" class="form-control form-select">
+                <option value="">Select a business</option>
+                <option
+                  th:each="business : ${businesses}"
+                  th:text="${business.name}"
+                  th:value="${business.id}"
+                  th:selected="${business.id == session.businessIdIncome}"
+                ></option>
+              </select>
+            </div>
+            <div class="col-6">
+              <select name="balanceId" class="form-control form-select">
+                <option value="">Select a balance</option>
+                <option
+                  th:each="balance : ${balances}"
+                  th:text="${balance.name}"
+                  th:value="${balance.id}"
+                  th:selected="${balance.id == session.balanceIdIncome}"
+                ></option>
+              </select>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-2">
+            <a
+              href="/income/clear-filters"
+              class="btn btn-outline-danger btn-sm me-1"
+            >
+              <i class="bi bi-trash2"></i>
+              Clear
             </a>
-            <a th:href="@{/income/delete/{id}(id=${income.id})}" class="btn py-0 px-1"
-              onclick="return confirm('Are you sure you want to delete this income?')">
-              <i class="bi bi-trash text-danger"></i>
+            <button class="btn btn-warning btn-sm">
+              <i class="bi bi-funnel"></i>
+              Filter
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Business Name</th>
+            <th scope="col">Balance</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Date Creation</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <th th:if="${ !incomes.hasContent }" class="text-center" colspan="7">
+            No incomes available
+          </th>
+
+          <tr th:each="income : ${incomes.content}">
+            <th th:text="${income.id}"></th>
+            <th th:text="${income.business.name}"></th>
+            <th th:text="${income.balance.name}"></th>
+            <th th:text="${income.amountFormatted}"></th>
+            <th th:text="${income.notes}"></th>
+            <th th:text="${income.createdAtFormatted}"></th>
+            <td class="d-flex justify-content-end">
+              <a
+                th:href="@{/income/{id}(id=${income.id})}"
+                class="btn py-0 px-1"
+              >
+                <i class="bi bi-pen text-warning"></i>
+              </a>
+              <a
+                th:href="@{/income/delete/{id}(id=${income.id})}"
+                class="btn py-0 px-1"
+                onclick="return confirm('Are you sure you want to delete this income?')"
+              >
+                <i class="bi bi-trash text-danger"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <nav class="d-flex justify-content-end">
+        <ul class="pagination">
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:href="@{/income(page=0, size=${incomes.size})}"
+              >First</a
+            >
+          </li>
+
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:if="${incomes.hasPrevious}"
+              th:href="@{/income(page=${incomes.number - 1}, size=${incomes.size})}"
+              >Previous</a
+            >
+          </li>
+
+          <li class="page-item disabled">
+            <a class="page-link">
+              <span
+                >Page <span th:text="${incomes.number + 1}"></span> of
+                <span th:text="${incomes.totalPages}"></span
+              ></span>
             </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </li>
 
-    <!-- Pagination -->
-    <nav class="d-flex justify-content-end">
-      <ul class="pagination">
-        <li class="page-item"><a class="page-link" th:href="@{/income(page=0, size=${incomes.size})}">First</a></li>
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:if="${incomes.hasNext}"
+              th:href="@{/income(page=${incomes.number + 1}, size=${incomes.size})}"
+              >Next</a
+            >
+          </li>
 
-        <li class="page-item"><a class="page-link" th:if="${incomes.hasPrevious}"
-            th:href="@{/income(page=${incomes.number - 1}, size=${incomes.size})}">Previous</a></li>
-
-        <li class="page-item disabled"><a class="page-link">
-            <span>Page <span th:text="${incomes.number + 1}"></span> of <span
-                th:text="${incomes.totalPages}"></span></span>
-          </a></li>
-
-        <li class="page-item"><a class="page-link" th:if="${incomes.hasNext}"
-            th:href="@{/income(page=${incomes.number + 1}, size=${incomes.size})}">Next</a></li>
-
-        <li class="page-item"><a class="page-link"
-            th:href="@{/income(page=${incomes.totalPages - 1}, size=${incomes.size})}">Last</a></li>
-      </ul>
-    </nav>
-  </section>
-</body>
-
+          <li class="page-item">
+            <a
+              class="page-link"
+              th:href="@{/income(page=${incomes.totalPages - 1}, size=${incomes.size})}"
+              >Last</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </section>
+  </body>
 </html>

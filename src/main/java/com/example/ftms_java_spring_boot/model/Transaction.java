@@ -134,7 +134,5 @@ public class Transaction {
 
   public void setTransactionType(String type) {
     this.transactionType = type;
-    // throw new UnsupportedOperationException("Unimplemented method
-    // 'setTransactionType'");
   }
 }

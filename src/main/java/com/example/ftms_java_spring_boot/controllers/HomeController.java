@@ -1,6 +1,7 @@
 package com.example.ftms_java_spring_boot.controllers;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import com.example.ftms_java_spring_boot.service.BalanceService;
 import com.example.ftms_java_spring_boot.service.TransactionService;
 import com.example.ftms_java_spring_boot.service.UserService;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpSession;
 import javassist.NotFoundException;
 
@@ -43,33 +46,27 @@ public class HomeController {
             Long userId = (Long) session.getAttribute("userId");
             User user = userService.getById(userId);
 
-            List<Balance> balances = balanceService.getAll(user);
+            List<Map<String, Object>> expenses = transactionService.getTransactionBusinesses(user, "Expense");
+            List<Map<String, Object>> incomes = transactionService.getTransactionBusinesses(user, "Income");
+            double totalBalance = balanceService.getTotalBalance(user);
+            double totalExpense = expenses.stream().mapToDouble(map -> ((Number) map.get("totalAmount")).doubleValue())
+                    .sum();
+            double totalIncome = incomes.stream().mapToDouble(map -> ((Number) map.get("totalAmount")).doubleValue())
+                    .sum();
+            double totalPortfilio = totalIncome - totalExpense;
+            List<Double> weeklyIncomes = transactionService.getWeeklyIncomes(user);
 
-            Pageable pageableTransactions = PageRequest.of(0, 5);
-            Page<Transaction> transactions = transactionService.getAllWithPagination(pageableTransactions, user,
-                    Optional.empty());
+            Pageable transactionPageable = PageRequest.of(0, 5);
+            Specification<Transaction> transactionfilters = (root, query, criteriaBuilder) -> {
+                List<Predicate> predicates = new ArrayList<>();
 
-            List<Object[]> expenses = transactionService.getTransactionBusinesses();
+                // Filter user scope
+                predicates.add(criteriaBuilder.equal(root.get("user"), user));
 
-            // double totalBalance = balances.stream()
-            // .mapToDouble(Balance::getBalance)
-            // .sum();
-            // double totalExpense = transactions.stream()
-            // .filter(trans -> trans.getTransactionType().equals("Expense"))
-            // .mapToDouble(Transaction::getAmount)
-            // .sum();
-            // double totalIncome = transactions.stream()
-            // .filter(trans -> trans.getTransactionType().equals("Income"))
-            // .mapToDouble(Transaction::getAmount)
-            // .sum();
-            // double totalPortfilio = totalIncome - totalExpense;
-
-            double totalBalance = 0;
-            double totalExpense = 0;
-            double totalIncome = 0;
-            double totalPortfilio = 0;
-
-            List<Double> weeklyIncomes = transactionService.getWeeklyIncomes();
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            };
+            Page<Transaction> transactions = transactionService.getAllWithPagination(transactionPageable,
+                    transactionfilters);
 
             model.addAttribute("totalBalance", currencyFormat.format(totalBalance));
             model.addAttribute("totalExpense", currencyFormat.format(totalExpense));
@@ -78,6 +75,7 @@ public class HomeController {
             model.addAttribute("weeklyIncomes", weeklyIncomes);
             model.addAttribute("transactions", transactions);
             model.addAttribute("expenses", expenses);
+            model.addAttribute("incomes", incomes);
 
             return "pages/home";
         } catch (NotFoundException e) {

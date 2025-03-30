@@ -28,12 +28,21 @@ public class BalanceService {
     return balanceRepository.findAllBalances(user);
   }
 
+  public Optional<Balance> getId(Long id) {
+    return balanceRepository.findById(id);
+  }
+
   public Balance getById(Long id) throws NotFoundException {
     Balance balance = balanceRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("Balance not found"));
 
     return balance;
     // return balanceRepository.findById(id);
+  }
+
+  public double getTotalBalance(User user) {
+    Optional<Double> amount = balanceRepository.getTotalBalance(user);
+    return amount.isEmpty() ? 0 : amount.get();
   }
 
   public double getBalance(Long id) {

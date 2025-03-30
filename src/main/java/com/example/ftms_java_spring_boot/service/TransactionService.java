@@ -2,14 +2,15 @@ package com.example.ftms_java_spring_boot.service;
 
 import jakarta.persistence.criteria.Predicate;
 
+import java.text.NumberFormat;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.TransactionRepository;
@@ -27,6 +29,7 @@ import com.example.ftms_java_spring_boot.repository.TransactionRepository;
 public class TransactionService {
   @Autowired
   private TransactionRepository transactionRepository;
+  static final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
 
   public List<Transaction> getAll(User user) {
     return transactionRepository.findAllTransactions(user);
@@ -34,26 +37,20 @@ public class TransactionService {
 
   public Page<Transaction> getAllWithPagination(
       Pageable pageable,
-      User user,
-      Optional<String> type) {
+      Specification<Transaction> filters) {
 
-    Specification<Transaction> filters = (root, query, criteriaBuilder) -> {
+    Specification<Transaction> defaultFilters = (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
-      // Filter by User
-      predicates.add(criteriaBuilder.equal(root.get("user"), user));
+      // Filter by delete records
       predicates.add(criteriaBuilder.equal(root.get("disabled"), false));
-
-      // Filter transaction type
-      if (!type.isEmpty()) {
-        predicates.add(
-            criteriaBuilder.equal(root.get("transactionType"), type.get()));
-      }
 
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };
 
-    return transactionRepository.findAll(filters, pageable);
+    Specification<Transaction> combinedFilters = Specification.where(defaultFilters).and(filters);
+
+    return transactionRepository.findAll(combinedFilters, pageable);
   }
 
   public List<Transaction> getUserExpenses(User user) {
@@ -64,12 +61,12 @@ public class TransactionService {
     return transactionRepository.findAllIncomes(user);
   }
 
-  public List<Double> getWeeklyIncomes() {
+  public List<Double> getWeeklyIncomes(User user) {
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime startDate = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
     LocalDateTime endDate = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).with(LocalTime.MAX);
 
-    List<Object[]> results = transactionRepository.getWeeklyIncomes(startDate, endDate);
+    List<Object[]> results = transactionRepository.getWeeklyIncomes(user, startDate, endDate);
 
     // Map to store transaction amounts by day name
     Map<String, Double> transactionMap = new HashMap<>();
@@ -87,8 +84,20 @@ public class TransactionService {
     return amounts;
   }
 
-  public List<Object[]> getTransactionBusinesses() {
-    return transactionRepository.getTransactionBusinesses();
+  public List<Map<String, Object>> getTransactionBusinesses(User user, String type) {
+    List<Object[]> transactions = transactionRepository.getTransactionBusinesses(user, type);
+    List<Map<String, Object>> data = new ArrayList<>();
+
+    for (Object[] transaction : transactions) {
+      Map<String, Object> newTransaction = new HashMap<>();
+      newTransaction.put("business", transaction[0]);
+      newTransaction.put("totalAmount", transaction[1]);
+      newTransaction.put("totalAmountFormatted", currencyFormat.format(transaction[1]));
+
+      data.add(newTransaction);
+    }
+
+    return data;
   }
 
   public Optional<Transaction> getById(Long id) {

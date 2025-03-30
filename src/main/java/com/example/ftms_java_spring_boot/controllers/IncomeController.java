@@ -1,5 +1,6 @@
 package com.example.ftms_java_spring_boot.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import com.example.ftms_java_spring_boot.service.BusinessService;
 import com.example.ftms_java_spring_boot.service.BalanceService;
 import com.example.ftms_java_spring_boot.service.UserService;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpSession;
 import javassist.NotFoundException;
 
@@ -44,20 +47,71 @@ public class IncomeController {
   public String incomeHome(
       HttpSession session,
       @RequestParam(defaultValue = "0") int page,
+      @RequestParam(required = false) Optional<Long> businessId,
+      @RequestParam(required = false) Optional<Long> balanceId,
       Model model) {
     try {
       Pageable pageable = PageRequest.of(page, 10);
       Long userId = (Long) session.getAttribute("userId");
       User user = userService.getById(userId);
 
-      Page<Transaction> incomes = transactionService.getAllWithPagination(
-          pageable, user, Optional.of("Income"));
+      Specification<Transaction> filters = (root, query, criteriaBuilder) -> {
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Filter user scope
+        predicates.add(criteriaBuilder.equal(root.get("user"), user));
+
+        // Filter transaction type
+        predicates.add(criteriaBuilder.equal(root.get("transactionType"), "Income"));
+
+        // Filter business
+        if (!businessId.isEmpty() || session.getAttribute("businessIdIncome") != null) {
+          Long businessIdFrom = businessId.isEmpty() ? (Long) session.getAttribute("businessIdIncome")
+              : businessId.get();
+          Optional<Business> business = businessService.getById(businessIdFrom);
+
+          if (!business.isEmpty()) {
+            predicates.add(
+                criteriaBuilder.equal(root.get("business"), business.get()));
+            session.setAttribute("businessIdIncome", businessIdFrom);
+          }
+        }
+
+        // Filter balance
+        if (!balanceId.isEmpty() || session.getAttribute("balanceIdIncome") != null) {
+          Long balanceIdFrom = balanceId.isEmpty() ? (Long) session.getAttribute("balanceIdIncome")
+              : balanceId.get();
+          Optional<Balance> balance = balanceService.getId(balanceIdFrom);
+
+          if (!balance.isEmpty()) {
+            predicates.add(
+                criteriaBuilder.equal(root.get("balance"), balance.get()));
+            session.setAttribute("balanceIdIncome", balanceIdFrom);
+          }
+        }
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+      };
+
+      Page<Transaction> incomes = transactionService.getAllWithPagination(pageable, filters);
+      List<Business> businesses = businessService.getAll(user);
+      List<Balance> balances = balanceService.getAll(user);
+      model.addAttribute("businesses", businesses);
+      model.addAttribute("balances", balances);
       model.addAttribute("incomes", incomes);
 
       return "pages/income/home_income";
     } catch (Exception e) {
       return "redirect:/login";
     }
+  }
+
+  @GetMapping("/income/clear-filters")
+  public String clearFilters(HttpSession session) {
+    session.removeAttribute("businessIdIncome");
+    session.removeAttribute("balanceIdIncome");
+
+    return "redirect:/income";
   }
 
   @GetMapping("/income/add")

@@ -10,11 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.example.ftms_java_spring_boot.model.Balance;
 import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.BusinessRepository;
 
 import jakarta.persistence.criteria.Predicate;
+import javassist.NotFoundException;
 
 @Service
 public class BusinessService {
@@ -49,6 +51,11 @@ public class BusinessService {
 
   public Optional<Business> getById(Long id) {
     return businessRepository.findById(id);
+  }
+
+  public Business getId(Long id) throws NotFoundException {
+    return businessRepository.findById(id)
+        .orElseThrow(() -> new NotFoundException("Business not found"));
   }
 
   public boolean create(Business business) {

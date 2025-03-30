@@ -1,11 +1,13 @@
 package com.example.ftms_java_spring_boot.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import com.example.ftms_java_spring_boot.service.BalanceService;
 import com.example.ftms_java_spring_boot.service.TransactionService;
 import com.example.ftms_java_spring_boot.service.UserService;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.servlet.http.HttpSession;
 import javassist.NotFoundException;
 
@@ -41,9 +44,16 @@ public class BalanceController {
       User user = userService.getById(userId);
 
       List<Balance> balances = balanceService.getAll(user);
-      Pageable pageableTransactions = PageRequest.of(0, 5);
-      Page<Transaction> transactions = transactionService.getAllWithPagination(pageableTransactions, user,
-          Optional.empty());
+      Pageable transactionPageable = PageRequest.of(0, 5);
+      Specification<Transaction> transactionfilters = (root, query, criteriaBuilder) -> {
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Filter user scope
+        predicates.add(criteriaBuilder.equal(root.get("user"), user));
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+      };
+      Page<Transaction> transactions = transactionService.getAllWithPagination(transactionPageable, transactionfilters);
 
       model.addAttribute("balances", balances);
       model.addAttribute("transactions", transactions);
