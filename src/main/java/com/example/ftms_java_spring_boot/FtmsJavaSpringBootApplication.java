@@ -8,5 +8,4 @@ public class FtmsJavaSpringBootApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FtmsJavaSpringBootApplication.class, args);
 	}
-
 }

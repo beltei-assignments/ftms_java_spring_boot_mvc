@@ -43,6 +43,10 @@
         color: var(--bs-info-text-emphasis);
         border: none;
       }
+
+      .flatpickr-calendar {
+        margin-top: 44px;
+      }
     </style>
   </head>
 
@@ -158,8 +162,43 @@
           <div class="row row-cols-lg-1 g-3">
             <div class="col">
               <div class="bg-primary card border-0 h-100 text-white">
-                <div class="card-body">
+                <div
+                  class="card-header border-0 bg-primary d-flex justify-content-between"
+                >
                   <p class="text-white fw-bolder">Incoming</p>
+
+                  <!-- Filter by week -->
+                  <div
+                    class="income-datepicker-container"
+                    style="position: relative; display: inline-block"
+                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="income-datepicker"
+                      style="display: none"
+                    />
+
+                    <div
+                      id="income-field-datepicker-trigger"
+                      class="input-group"
+                      style="width: 300px"
+                    >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="income-datepicker-trigger"
+                        placeholder="Select a date"
+                        readonly
+                      />
+                      <span class="input-group-text" style="cursor: pointer">
+                        <i class="bi bi-calendar4"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-body">
                   <canvas id="incomingChart"></canvas>
                 </div>
               </div>
@@ -171,7 +210,7 @@
                 <div class="col">
                   <div class="card border-0">
                     <div class="card-header title-spend">
-                      <strong>Expensing</strong>
+                      <strong>Expensing for business</strong>
                     </div>
                     <div class="card-body">
                       <div th:if="${expenses.size == 0}" class="text-center">
@@ -207,7 +246,7 @@
                 <div class="col">
                   <div class="card border-0 mt-2">
                     <div class="card-header title-income">
-                      <strong>Incoming</strong>
+                      <strong>Incoming for business</strong>
                     </div>
                     <div class="card-body">
                       <div class="row row-cols-1 g-2">
@@ -253,54 +292,139 @@
       </script>
 
       <script>
-        const ctx = document.getElementById("incomingChart");
+        /*
+          Variables
+        */
+        let incomingChartInstance = null;
 
-        new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            datasets: [
-              {
-                label: "This week ($)",
-                data: weeklyIncomes,
-                backgroundColor: ["#F7C846"],
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                ticks: {
-                  color: "#FFFFFF", // Change label color here
-                  font: {
-                    size: 14, // Font size
+        /*
+          Methods
+        */
+        function renderIncomingChart(data) {
+          const ctx = document.getElementById("incomingChart");
+
+          // Destroy existing chart instance if it exists
+          if (incomingChartInstance) {
+            incomingChartInstance.destroy();
+          }
+
+          // Create new chart instance
+          incomingChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+              datasets: [
+                {
+                  label: "In week ($)",
+                  data,
+                  backgroundColor: ["#F7C846"],
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                x: {
+                  ticks: {
+                    color: "#FFFFFF", // Change label color here
+                    font: {
+                      size: 14, // Font size
+                    },
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    color: "#FFFFFF", // Change label color here
+                    font: {
+                      size: 14,
+                    },
                   },
                 },
               },
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: "#FFFFFF", // Change label color here
-                  font: {
-                    size: 14,
+              plugins: {
+                legend: {
+                  labels: {
+                    font: {
+                      size: 14, // Font size
+                      family: "'Arial', sans-serif",
+                    },
+                    color: "#FFFFFF", // Font color
                   },
                 },
               },
             },
-            plugins: {
-              legend: {
-                labels: {
-                  font: {
-                    size: 14, // Font size
-                    family: "'Arial', sans-serif",
-                  },
-                  color: "#FFFFFF", // Font color
+          });
+        }
+        function getStartAndEndOfWeek(date) {
+          const dayOfWeek = date.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+          const startOfWeek = new Date(date);
+          const endOfWeek = new Date(date);
+
+          // Set to the start of the week (Monday)
+          startOfWeek.setDate(date.getDate() - dayOfWeek + 1); // Adjust for Monday as the start of the week
+          // Set to the end of the week (Sunday)
+          endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+          return {
+            start: formatDate(startOfWeek),
+            end: formatDate(endOfWeek),
+          };
+        }
+
+        function formatDate(date) {
+          const options = {
+            day: "2-digit", // Two-digit day (e.g., "19")
+            month: "short", // Full month name (e.g., "March")
+            year: "numeric", // Four-digit year (e.g., "2025")
+          };
+          return date.toLocaleDateString("en-US", options);
+        }
+
+        /*
+          Mounted
+        */
+        renderIncomingChart(weeklyIncomes);
+
+        /*
+          jQuey
+        */
+        $(document).ready(function () {
+          const weekRange = getStartAndEndOfWeek(new Date());
+          $("#income-datepicker-trigger").val(`${weekRange.start} - ${weekRange.end}`);
+
+          $("#income-field-datepicker-trigger").click(function () {
+            datepicker.open();
+          });
+
+          const datepicker = flatpickr("#income-datepicker", {
+            dateFormat: "Y-m-d",
+            enableTime: false,
+            defaultDate: new Date(),
+            appendTo: document.querySelector(".income-datepicker-container"),
+            onChange: function (_, date) {
+              // Formate date
+              const weekRange = getStartAndEndOfWeek(new Date(date));
+              $("#income-datepicker-trigger").val(
+                `${weekRange.start} - ${weekRange.end}`
+              );
+
+              // Load data
+              $.ajax({
+                url: "/api/transaction/weekly",
+                type: "GET",
+                dataType: "json",
+                data: { date },
+                success: function (data) {
+                  renderIncomingChart(data);
                 },
-              },
+                error: function (e) {
+                  console.log(e);
+                },
+              });
             },
-          },
+          });
         });
       </script>
     </section>

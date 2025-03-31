@@ -61,10 +61,10 @@ public class TransactionService {
     return transactionRepository.findAllIncomes(user);
   }
 
-  public List<Double> getWeeklyIncomes(User user) {
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime startDate = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
-    LocalDateTime endDate = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).with(LocalTime.MAX);
+  public List<Double> getWeeklyIncomes(User user, LocalDateTime date) {
+    // LocalDateTime now = LocalDateTime.now();
+    LocalDateTime startDate = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
+    LocalDateTime endDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).with(LocalTime.MAX);
 
     List<Object[]> results = transactionRepository.getWeeklyIncomes(user, startDate, endDate);
 

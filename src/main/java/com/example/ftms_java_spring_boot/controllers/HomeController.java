@@ -1,6 +1,7 @@
 package com.example.ftms_java_spring_boot.controllers;
 
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +55,8 @@ public class HomeController {
             double totalIncome = incomes.stream().mapToDouble(map -> ((Number) map.get("totalAmount")).doubleValue())
                     .sum();
             double totalPortfilio = totalIncome - totalExpense;
-            List<Double> weeklyIncomes = transactionService.getWeeklyIncomes(user);
+            LocalDateTime now = LocalDateTime.now();
+            List<Double> weeklyIncomes = transactionService.getWeeklyIncomes(user, now);
 
             Pageable transactionPageable = PageRequest.of(0, 5);
             Specification<Transaction> transactionfilters = (root, query, criteriaBuilder) -> {
