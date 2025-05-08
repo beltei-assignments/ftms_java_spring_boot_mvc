@@ -39,6 +39,9 @@ public class BusinessService {
       // criteriaBuilder.equal(root.get("transactionType"), type.get()));
       // }
 
+      // Apply ORDER BY id DESC
+      query.orderBy(criteriaBuilder.desc(root.get("id")));
+
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };
 
