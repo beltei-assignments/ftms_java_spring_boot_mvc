@@ -1,6 +1,7 @@
 package com.example.ftms_java_spring_boot.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class MailService {
+    @Value("${ftms.email}")
+    private String ftmsEmail;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -25,7 +28,7 @@ public class MailService {
             helper.setSubject(subject);
             helper.setText(text, true); // true enables HTML
 
-            helper.setFrom("admin@ftms.com");
+            helper.setFrom(ftmsEmail);
 
             mailSender.send(message);
             System.out.println("Email sent successfully!");
