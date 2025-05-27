@@ -65,6 +65,9 @@ public class HomeController {
                 // Filter user scope
                 predicates.add(criteriaBuilder.equal(root.get("user"), user));
 
+                // Apply ORDER BY id DESC
+                query.orderBy(criteriaBuilder.desc(root.get("id")));
+
                 return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             };
             Page<Transaction> transactions = transactionService.getAllWithPagination(transactionPageable,

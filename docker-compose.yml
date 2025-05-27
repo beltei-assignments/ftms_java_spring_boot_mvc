@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  springboot-app:
+    build: .
+    container_name: springboot-app
+    ports:
+      - "9000:80"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    restart: unless-stopped

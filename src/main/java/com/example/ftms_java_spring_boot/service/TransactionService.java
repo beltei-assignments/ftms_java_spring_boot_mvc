@@ -1,7 +1,11 @@
 package com.example.ftms_java_spring_boot.service;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -39,6 +43,28 @@ public class TransactionService {
       Pageable pageable,
       Specification<Transaction> filters) {
 
+    // Specification<Transaction> defaultFilters = (root, query, criteriaBuilder) ->
+    // {
+    // List<Predicate> predicates = new ArrayList<>();
+
+    // // Filter by delete records
+    // predicates.add(criteriaBuilder.equal(root.get("disabled"), false));
+
+    // return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    // };
+
+    // Specification<Transaction> combinedFilters =
+    // Specification.where(defaultFilters).and(filters);
+    Specification<Transaction> combinedFilters = getCombinedDefaultFilters(filters);
+
+    return transactionRepository.findAll(combinedFilters, pageable);
+  }
+
+  // public BigDecimal sumAmount(Specification<Transaction> filters) {
+  //   return transactionRepository.sumAmount(filters);
+  // }
+
+  private Specification<Transaction> getCombinedDefaultFilters(Specification<Transaction> filters) {
     Specification<Transaction> defaultFilters = (root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
@@ -48,9 +74,7 @@ public class TransactionService {
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };
 
-    Specification<Transaction> combinedFilters = Specification.where(defaultFilters).and(filters);
-
-    return transactionRepository.findAll(combinedFilters, pageable);
+    return Specification.where(defaultFilters).and(filters);
   }
 
   public List<Transaction> getUserExpenses(User user) {
