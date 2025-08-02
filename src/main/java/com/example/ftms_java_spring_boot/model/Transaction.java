@@ -1,7 +1,6 @@
 package com.example.ftms_java_spring_boot.model;
 
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -20,6 +19,9 @@ public class Transaction {
 
   @Column(nullable = false)
   private String transactionType;
+
+	@Column(nullable = false)
+  private String transactionCategory;
 
   @Column(nullable = false)
   private double amount = 0;
@@ -68,6 +70,10 @@ public class Transaction {
 
   public String getTransactionType() {
     return transactionType;
+  }
+
+  public String getTransactionCategory() {
+    return transactionCategory;
   }
 
   public String getNotes() {
@@ -134,5 +140,9 @@ public class Transaction {
 
   public void setTransactionType(String type) {
     this.transactionType = type;
+  }
+
+	public void setTransactionCategory(String category) {
+	this.transactionCategory = category;
   }
 }

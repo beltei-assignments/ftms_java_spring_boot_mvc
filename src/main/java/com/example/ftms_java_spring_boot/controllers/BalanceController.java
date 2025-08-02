@@ -2,7 +2,6 @@ package com.example.ftms_java_spring_boot.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.ftms_java_spring_boot.model.Balance;
-import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.service.BalanceService;

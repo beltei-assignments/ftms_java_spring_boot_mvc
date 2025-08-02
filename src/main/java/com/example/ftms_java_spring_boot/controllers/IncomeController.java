@@ -1,6 +1,7 @@
 package com.example.ftms_java_spring_boot.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,241 +30,248 @@ import com.example.ftms_java_spring_boot.service.TransactionService;
 
 @Controller
 public class IncomeController {
-  private final UserService userService;
-  private final BusinessService businessService;
-  private final TransactionService transactionService;
-  private final BalanceService balanceService;
+	private final UserService userService;
+	private final BusinessService businessService;
+	private final TransactionService transactionService;
+	private final BalanceService balanceService;
+	private List<String> categories = Arrays.asList("payroll", "rent", "marketing", "office supplies", "utilities",
+			"travel", "other");;
 
-  @Autowired
-  public IncomeController(BusinessService businessService, TransactionService transactionService,
-      BalanceService balanceService, UserService userService) {
-    this.userService = userService;
-    this.balanceService = balanceService;
-    this.businessService = businessService;
-    this.transactionService = transactionService;
-  }
+	@Autowired
+	public IncomeController(BusinessService businessService, TransactionService transactionService,
+			BalanceService balanceService, UserService userService) {
+		this.userService = userService;
+		this.balanceService = balanceService;
+		this.businessService = businessService;
+		this.transactionService = transactionService;
+	}
 
-  @GetMapping("/income")
-  public String incomeHome(
-      HttpSession session,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(required = false) Optional<Long> businessId,
-      @RequestParam(required = false) Optional<Long> balanceId,
-      Model model) {
-    try {
-      Pageable pageable = PageRequest.of(page, 10);
-      Long userId = (Long) session.getAttribute("userId");
-      User user = userService.getById(userId);
+	@GetMapping("/income")
+	public String incomeHome(
+			HttpSession session,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(required = false) Optional<Long> businessId,
+			@RequestParam(required = false) Optional<Long> balanceId,
+			Model model) {
+		try {
+			Pageable pageable = PageRequest.of(page, 10);
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.getById(userId);
 
-      Specification<Transaction> filters = (root, query, criteriaBuilder) -> {
-        List<Predicate> predicates = new ArrayList<>();
+			Specification<Transaction> filters = (root, query, criteriaBuilder) -> {
+				List<Predicate> predicates = new ArrayList<>();
 
-        // Filter user scope
-        predicates.add(criteriaBuilder.equal(root.get("user"), user));
+				// Filter user scope
+				predicates.add(criteriaBuilder.equal(root.get("user"), user));
 
-        // Filter transaction type
-        predicates.add(criteriaBuilder.equal(root.get("transactionType"), "Income"));
+				// Filter transaction type
+				predicates.add(criteriaBuilder.equal(root.get("transactionType"), "Income"));
 
-        // Filter business
-        if (!businessId.isEmpty() || session.getAttribute("businessIdIncome") != null) {
-          Long businessIdFrom = businessId.isEmpty() ? (Long) session.getAttribute("businessIdIncome")
-              : businessId.get();
-          Optional<Business> business = businessService.getById(businessIdFrom);
+				// Filter business
+				if (!businessId.isEmpty() || session.getAttribute("businessIdIncome") != null) {
+					Long businessIdFrom = businessId.isEmpty() ? (Long) session.getAttribute("businessIdIncome")
+							: businessId.get();
+					Optional<Business> business = businessService.getById(businessIdFrom);
 
-          if (!business.isEmpty()) {
-            predicates.add(
-                criteriaBuilder.equal(root.get("business"), business.get()));
-            session.setAttribute("businessIdIncome", businessIdFrom);
-          }
-        }
+					if (!business.isEmpty()) {
+						predicates.add(
+								criteriaBuilder.equal(root.get("business"), business.get()));
+						session.setAttribute("businessIdIncome", businessIdFrom);
+					}
+				}
 
-        // Filter balance
-        if (!balanceId.isEmpty() || session.getAttribute("balanceIdIncome") != null) {
-          Long balanceIdFrom = balanceId.isEmpty() ? (Long) session.getAttribute("balanceIdIncome")
-              : balanceId.get();
-          Optional<Balance> balance = balanceService.getId(balanceIdFrom);
+				// Filter balance
+				if (!balanceId.isEmpty() || session.getAttribute("balanceIdIncome") != null) {
+					Long balanceIdFrom = balanceId.isEmpty() ? (Long) session.getAttribute("balanceIdIncome")
+							: balanceId.get();
+					Optional<Balance> balance = balanceService.getId(balanceIdFrom);
 
-          if (!balance.isEmpty()) {
-            predicates.add(
-                criteriaBuilder.equal(root.get("balance"), balance.get()));
-            session.setAttribute("balanceIdIncome", balanceIdFrom);
-          }
-        }
+					if (!balance.isEmpty()) {
+						predicates.add(
+								criteriaBuilder.equal(root.get("balance"), balance.get()));
+						session.setAttribute("balanceIdIncome", balanceIdFrom);
+					}
+				}
 
-        // Apply ORDER BY id DESC
-        query.orderBy(criteriaBuilder.desc(root.get("id")));
+				// Apply ORDER BY id DESC
+				query.orderBy(criteriaBuilder.desc(root.get("id")));
 
-        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-      };
+				return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+			};
 
-      Page<Transaction> incomes = transactionService.getAllWithPagination(pageable, filters);
-      List<Business> businesses = businessService.getAll(user);
-      List<Balance> balances = balanceService.getAll(user);
-      model.addAttribute("businesses", businesses);
-      model.addAttribute("balances", balances);
-      model.addAttribute("incomes", incomes);
+			Page<Transaction> incomes = transactionService.getAllWithPagination(pageable, filters);
+			List<Business> businesses = businessService.getAll(user);
+			List<Balance> balances = balanceService.getAll(user);
+			model.addAttribute("businesses", businesses);
+			model.addAttribute("balances", balances);
+			model.addAttribute("incomes", incomes);
 
-      return "pages/income/home_income";
-    } catch (Exception e) {
-      return "redirect:/login";
-    }
-  }
+			return "pages/income/home_income";
+		} catch (Exception e) {
+			return "redirect:/login";
+		}
+	}
 
-  @GetMapping("/income/clear-filters")
-  public String clearFilters(HttpSession session) {
-    session.removeAttribute("businessIdIncome");
-    session.removeAttribute("balanceIdIncome");
+	@GetMapping("/income/clear-filters")
+	public String clearFilters(HttpSession session) {
+		session.removeAttribute("businessIdIncome");
+		session.removeAttribute("balanceIdIncome");
 
-    return "redirect:/income";
-  }
+		return "redirect:/income";
+	}
 
-  @GetMapping("/income/add")
-  public String incomeAdd(HttpSession session, Model model) {
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      User user = userService.getById(userId);
+	@GetMapping("/income/add")
+	public String incomeAdd(HttpSession session, Model model) {
+		try {
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.getById(userId);
 
-      model.addAttribute("title", "Add Income");
+			model.addAttribute("title", "Add Income");
+			model.addAttribute("categories", categories);
 
-      List<Business> businesses = businessService.getAll(user);
-      model.addAttribute("businesses", businesses);
+			List<Business> businesses = businessService.getAll(user);
+			model.addAttribute("businesses", businesses);
 
-      List<Balance> balances = balanceService.getAll(user);
-      model.addAttribute("balances", balances);
+			List<Balance> balances = balanceService.getAll(user);
+			model.addAttribute("balances", balances);
 
-      return "pages/income/edit_income";
-    } catch (Exception e) {
-      return "redirect:/login";
-    }
-  }
+			return "pages/income/edit_income";
+		} catch (Exception e) {
+			return "redirect:/login";
+		}
+	}
 
-  @GetMapping("/income/{id}")
-  public String incomeEdit(HttpSession session, @PathVariable Long id, Model model) {
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      User user = userService.getById(userId);
+	@GetMapping("/income/{id}")
+	public String incomeEdit(HttpSession session, @PathVariable Long id, Model model) {
+		try {
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.getById(userId);
 
-      Optional<Transaction> transaction = transactionService.getById(id);
+			Optional<Transaction> transaction = transactionService.getById(id);
 
-      if (transaction.isEmpty()) {
-        return "redirect:/income";
-      }
+			if (transaction.isEmpty()) {
+				return "redirect:/income";
+			}
 
-      model.addAttribute("title", "Update income");
-      model.addAttribute("income", transaction.get());
+			model.addAttribute("title", "Update income");
+			model.addAttribute("income", transaction.get());
+			model.addAttribute("categories", categories);
 
-      List<Business> businesses = businessService.getAll(user);
-      model.addAttribute("businesses", businesses);
+			List<Business> businesses = businessService.getAll(user);
+			model.addAttribute("businesses", businesses);
 
-      List<Balance> balances = balanceService.getAll(user);
-      model.addAttribute("balances", balances);
+			List<Balance> balances = balanceService.getAll(user);
+			model.addAttribute("balances", balances);
 
-      return "pages/income/edit_income";
-    } catch (Exception e) {
-      return "redirect:/login";
-    }
-  }
+			return "pages/income/edit_income";
+		} catch (Exception e) {
+			return "redirect:/login";
+		}
+	}
 
-  // Create or Update Expense
-  @PostMapping("/income")
-  public String saveIncome(
-      HttpSession session,
-      @RequestParam("business_id") Long businessId,
-      @RequestParam("amount") Double amount,
-      @RequestParam("balance_id") Long balanceId,
-      @RequestParam("notes") String notes,
-      @RequestParam("id") Optional<Long> id,
-      Model model) {
+	// Create or Update Expense
+	@PostMapping("/income")
+	public String saveIncome(
+			HttpSession session,
+			@RequestParam("business_id") Long businessId,
+			@RequestParam("transactionCategory") String transactionCategory,
+			@RequestParam("amount") Double amount,
+			@RequestParam("balance_id") Long balanceId,
+			@RequestParam("notes") String notes,
+			@RequestParam("id") Optional<Long> id,
+			Model model) {
 
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      User user = userService.getById(userId);
+		try {
+			Long userId = (Long) session.getAttribute("userId");
+			User user = userService.getById(userId);
 
-      Transaction income;
-      Balance balance = balanceService.getById(balanceId);
-      Business business = businessService.getById(businessId)
-          .orElseThrow(() -> new RuntimeException("Business not found"));
+			Transaction income;
+			Balance balance = balanceService.getById(balanceId);
+			Business business = businessService.getById(businessId)
+					.orElseThrow(() -> new RuntimeException("Business not found"));
 
-      if (id.isEmpty()) {
-        // Creating a new income
-        income = new Transaction();
-        income.setBusiness(business);
-        income.setBalance(balance);
-        income.setAmount(amount);
-        income.setNotes(Optional.ofNullable(notes));
-        income.setTransactionType("Income");
-        income.setUser(user);
+			if (id.isEmpty()) {
+				// Creating a new income
+				income = new Transaction();
+				income.setBusiness(business);
+				income.setBalance(balance);
+				income.setTransactionCategory(transactionCategory);
+				income.setAmount(amount);
+				income.setNotes(Optional.ofNullable(notes));
+				income.setTransactionType("Income");
+				income.setUser(user);
 
-        // Add amount to balance
-        balance.setBalance(balance.getBalance() + amount);
-        balanceService.save(balance);
-        transactionService.create(income);
-      } else {
-        // Updating an existing income
-        income = transactionService.getById(id.get())
-            .orElseThrow(() -> new RuntimeException("Income not found"));
+				// Add amount to balance
+				balance.setBalance(balance.getBalance() + amount);
+				balanceService.save(balance);
+				transactionService.create(income);
+			} else {
+				// Updating an existing income
+				income = transactionService.getById(id.get())
+						.orElseThrow(() -> new RuntimeException("Income not found"));
 
-        double oldAmount = income.getAmount();
-        Balance oldBalance = income.getBalance();
+				double oldAmount = income.getAmount();
+				Balance oldBalance = income.getBalance();
 
-        // If changing to a different balance
-        if (!oldBalance.getId().equals(balanceId)) {
-          // Remove amount from old balance
-          oldBalance.setBalance(oldBalance.getBalance() - oldAmount);
-          balanceService.save(oldBalance);
+				// If changing to a different balance
+				if (!oldBalance.getId().equals(balanceId)) {
+					// Remove amount from old balance
+					oldBalance.setBalance(oldBalance.getBalance() - oldAmount);
+					balanceService.save(oldBalance);
 
-          // Add to new balance
-          balance.setBalance(balance.getBalance() + amount);
-          balanceService.save(balance);
-        } else {
-          // Same balance, just update the difference
-          double difference = amount - oldAmount;
-          // Update balance with the difference
-          balance.setBalance(balance.getBalance() + difference);
-          balanceService.save(balance);
-        }
+					// Add to new balance
+					balance.setBalance(balance.getBalance() + amount);
+					balanceService.save(balance);
+				} else {
+					// Same balance, just update the difference
+					double difference = amount - oldAmount;
+					// Update balance with the difference
+					balance.setBalance(balance.getBalance() + difference);
+					balanceService.save(balance);
+				}
 
-        // Update income details
-        income.setBusiness(business);
-        income.setBalance(balance);
-        income.setAmount(amount);
-        income.setNotes(Optional.ofNullable(notes));
-        transactionService.update(income);
-      }
+				// Update income details
+				income.setBusiness(business);
+				income.setBalance(balance);
+				income.setTransactionCategory(transactionCategory);
+				income.setAmount(amount);
+				income.setNotes(Optional.ofNullable(notes));
+				transactionService.update(income);
+			}
 
-      return "redirect:/income";
-    } catch (NotFoundException e) {
-      return "redirect:/income";
-    } catch (RuntimeException e) {
-      return "redirect:/income";
-    }
-  }
+			return "redirect:/income";
+		} catch (NotFoundException e) {
+			return "redirect:/income";
+		} catch (RuntimeException e) {
+			return "redirect:/income";
+		}
+	}
 
-  // Delete income
-  @GetMapping("/income/delete/{id}")
-  public String deleteIncome(@PathVariable Long id) {
-    try {
-      // Get the income before deleting
-      Transaction income = transactionService.getById(id)
-          .orElseThrow(() -> new RuntimeException("Income not found"));
+	// Delete income
+	@GetMapping("/income/delete/{id}")
+	public String deleteIncome(@PathVariable Long id) {
+		try {
+			// Get the income before deleting
+			Transaction income = transactionService.getById(id)
+					.orElseThrow(() -> new RuntimeException("Income not found"));
 
-      // Get the associated balance
-      Balance balance = income.getBalance();
+			// Get the associated balance
+			Balance balance = income.getBalance();
 
-      // Restore the amount to the balance
-      balance.setBalance(balance.getBalance() - income.getAmount());
+			// Restore the amount to the balance
+			balance.setBalance(balance.getBalance() - income.getAmount());
 
-      // Update the balance first
-      balanceService.save(balance);
+			// Update the balance first
+			balanceService.save(balance);
 
-      // Then delete the income
-      transactionService.deleteById(id);
+			// Then delete the income
+			transactionService.deleteById(id);
 
-      return "redirect:/income";
-    } catch (RuntimeException e) {
-      // You might want to handle the error more gracefully
-      // For now, just redirect to income page
-      return "redirect:/income";
-    }
-  }
+			return "redirect:/income";
+		} catch (RuntimeException e) {
+			// You might want to handle the error more gracefully
+			// For now, just redirect to income page
+			return "redirect:/income";
+		}
+	}
 }

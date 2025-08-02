@@ -1,11 +1,6 @@
 package com.example.ftms_java_spring_boot.service;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-
-import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -24,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.Transaction;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.TransactionRepository;
@@ -43,26 +37,10 @@ public class TransactionService {
       Pageable pageable,
       Specification<Transaction> filters) {
 
-    // Specification<Transaction> defaultFilters = (root, query, criteriaBuilder) ->
-    // {
-    // List<Predicate> predicates = new ArrayList<>();
-
-    // // Filter by delete records
-    // predicates.add(criteriaBuilder.equal(root.get("disabled"), false));
-
-    // return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-    // };
-
-    // Specification<Transaction> combinedFilters =
-    // Specification.where(defaultFilters).and(filters);
     Specification<Transaction> combinedFilters = getCombinedDefaultFilters(filters);
 
     return transactionRepository.findAll(combinedFilters, pageable);
   }
-
-  // public BigDecimal sumAmount(Specification<Transaction> filters) {
-  //   return transactionRepository.sumAmount(filters);
-  // }
 
   private Specification<Transaction> getCombinedDefaultFilters(Specification<Transaction> filters) {
     Specification<Transaction> defaultFilters = (root, query, criteriaBuilder) -> {
@@ -86,7 +64,6 @@ public class TransactionService {
   }
 
   public List<Double> getWeeklyIncomes(User user, LocalDateTime date) {
-    // LocalDateTime now = LocalDateTime.now();
     LocalDateTime startDate = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).with(LocalTime.MIN);
     LocalDateTime endDate = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).with(LocalTime.MAX);
 

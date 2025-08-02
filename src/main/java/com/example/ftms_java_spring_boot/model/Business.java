@@ -10,67 +10,71 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "businesses")
 public class Business {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  @Column(nullable = false)
-  private String name;
+	@Column(nullable = false)
+	private String name;
 
-  @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-  @CreationTimestamp
-  private LocalDateTime createdAt;
+	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+	@CreationTimestamp
+	private LocalDateTime createdAt;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 
-  @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-  private boolean disabled = false;
+	@Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+	private boolean disabled = false;
 
-  // Constructors
-  public Business() {
-  }
+	// Constructors
+	public Business() {
+	}
 
-  public Business(String name) {
-    this.name = name;
-  }
+	public Business(String name) {
+		this.name = name;
+	}
 
-  // Getters and Setters
-  public Long getId() {
-    return id;
-  }
+	// Getters and Setters
+	public Long getId() {
+		return id;
+	}
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public String getCreatedAt() {
-    return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-  }
+	public String getCreatedAt() {
+		return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+	}
 
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+	public void setUser(User user) {
+		this.user = user;
+	}
 
-  public void setDisabled(boolean disabled) {
-    this.disabled = disabled;
-  }
+	public User getUser() {
+		return user;
+	}
 
-public void setAmount(Double amount) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setAmount'");
-}
+	public Long getUserId() {
+		return user.getId();
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
 }

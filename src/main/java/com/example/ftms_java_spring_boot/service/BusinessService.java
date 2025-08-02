@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.example.ftms_java_spring_boot.model.Balance;
 import com.example.ftms_java_spring_boot.model.Business;
 import com.example.ftms_java_spring_boot.model.User;
 import com.example.ftms_java_spring_boot.repository.BusinessRepository;
@@ -32,12 +31,6 @@ public class BusinessService {
       // Filter by User
       predicates.add(criteriaBuilder.equal(root.get("user"), user));
       predicates.add(criteriaBuilder.equal(root.get("disabled"), false));
-
-      // Filter transaction type
-      // if (!type.isEmpty()) {
-      // predicates.add(
-      // criteriaBuilder.equal(root.get("transactionType"), type.get()));
-      // }
 
       // Apply ORDER BY id DESC
       query.orderBy(criteriaBuilder.desc(root.get("id")));

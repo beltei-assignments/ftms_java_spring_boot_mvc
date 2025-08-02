@@ -1,5 +1,7 @@
 package com.example.ftms_java_spring_boot.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -54,7 +56,9 @@ public class Balance {
   }
 
   public double getBalance() {
-    return balance;
+    return BigDecimal.valueOf(balance)
+        .setScale(2, RoundingMode.HALF_UP)
+        .doubleValue();
   }
 
   public String getBalanceFormatted() {
@@ -74,9 +78,9 @@ public class Balance {
     this.disabled = disabled;
   }
 
-public Balance orElseThrow(Object object) {
+  public Balance orElseThrow(Object object) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-}
+  }
 
 }

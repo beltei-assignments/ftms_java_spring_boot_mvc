@@ -392,7 +392,9 @@
         */
         $(document).ready(function () {
           const weekRange = getStartAndEndOfWeek(new Date());
-          $("#income-datepicker-trigger").val(`${weekRange.start} - ${weekRange.end}`);
+          $("#income-datepicker-trigger").val(
+            `${weekRange.start} - ${weekRange.end}`
+          );
 
           $("#income-field-datepicker-trigger").click(function () {
             datepicker.open();
