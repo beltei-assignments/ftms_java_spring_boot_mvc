@@ -41,8 +41,9 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 **Following commands**
 - Start server: `./mvnw spring-boot:run`
+- Server running on: http://localhost:9000
 
-## ✨🎉🎉 Great! Let's go to use Financial Tracking Management System! 🎉🎉✨
+## ✨🎉 Great! Let's go to use Financial Tracking Management System! 🎉✨
 
 **Following users**
 - Email: `admin@example.com` | Password: `123`
