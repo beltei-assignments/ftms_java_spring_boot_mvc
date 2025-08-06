@@ -1,5 +1,7 @@
 package com.example.ftms_java_spring_boot.controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -176,8 +178,12 @@ public class ExpenseController {
 			@RequestParam("amount") Double amount,
 			@RequestParam("balance_id") Long balanceId,
 			@RequestParam("notes") String notes,
+			@RequestParam("createdAt") String createdAtString,
 			@RequestParam("id") Optional<Long> id,
 			Model model) {
+
+		LocalDate parsedDate = LocalDate.parse(createdAtString);
+		LocalDateTime createdAt = parsedDate.atStartOfDay();
 
 		try {
 			Long userId = (Long) session.getAttribute("userId");
@@ -214,6 +220,9 @@ public class ExpenseController {
 				balanceService.save(balance);
 
 				transactionService.create(expense);
+
+				expense.setCreatedAt(createdAt);
+				transactionService.update(expense);
 			} else {
 				// Updating an existing expense
 				expense = transactionService.getById(id.get())
@@ -250,16 +259,12 @@ public class ExpenseController {
 				expense.setTransactionCategory(transactionCategory);
 				expense.setAmount(amount);
 				expense.setNotes(Optional.ofNullable(notes));
+				expense.setCreatedAt(createdAt);
 				transactionService.update(expense);
 			}
 
 			return "redirect:/expense";
 		} catch (NotFoundException e) {
-			// model.addAttribute("error", e.getMessage());
-			// model.addAttribute("title", id.isEmpty() ? "Add Expense" : "Update Expense");
-			// model.addAttribute("businesses", businessService.getAll());
-			// model.addAttribute("balances", balanceService.getAll(user));
-			// return "pages/expense/edit_expense";
 			return "redirect:/login";
 		}
 	}

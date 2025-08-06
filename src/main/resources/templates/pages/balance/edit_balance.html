@@ -36,12 +36,12 @@
           <input th:field="*{id}" type="hidden">
 
           <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Name *</label>
             <input th:field="*{name}" name="name" type="text" class="form-control" required>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Amount ($)</label>
+            <label class="form-label">Amount ($) *</label>
             <input th:field="*{balance}" type="number" class="form-control" min="0" step="0.01" required>
           </div>
         </div>

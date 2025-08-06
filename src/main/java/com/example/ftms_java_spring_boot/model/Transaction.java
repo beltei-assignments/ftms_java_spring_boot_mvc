@@ -110,6 +110,10 @@ public class Transaction {
     return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
   }
 
+  public String getCreatedAtDate() {
+    return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+  }
+
   public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }

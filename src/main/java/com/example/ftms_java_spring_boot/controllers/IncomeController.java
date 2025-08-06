@@ -1,5 +1,7 @@
 package com.example.ftms_java_spring_boot.controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -177,9 +179,13 @@ public class IncomeController {
 			@RequestParam("transactionCategory") String transactionCategory,
 			@RequestParam("amount") Double amount,
 			@RequestParam("balance_id") Long balanceId,
+			@RequestParam("createdAt") String createdAtString,
 			@RequestParam("notes") String notes,
 			@RequestParam("id") Optional<Long> id,
 			Model model) {
+
+		LocalDate parsedDate = LocalDate.parse(createdAtString);
+		LocalDateTime createdAt = parsedDate.atStartOfDay();
 
 		try {
 			Long userId = (Long) session.getAttribute("userId");
@@ -205,6 +211,9 @@ public class IncomeController {
 				balance.setBalance(balance.getBalance() + amount);
 				balanceService.save(balance);
 				transactionService.create(income);
+
+				income.setCreatedAt(createdAt);
+				transactionService.update(income);
 			} else {
 				// Updating an existing income
 				income = transactionService.getById(id.get())
@@ -235,6 +244,7 @@ public class IncomeController {
 				income.setBalance(balance);
 				income.setTransactionCategory(transactionCategory);
 				income.setAmount(amount);
+				income.setCreatedAt(createdAt);
 				income.setNotes(Optional.ofNullable(notes));
 				transactionService.update(income);
 			}
